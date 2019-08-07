@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Replacing 'Wave to Engage' on Xbox One by Combining Body Pose, Gaze and Motion to Determine Intention to Interact</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Julia Schwarz portfolio and personal website">
+    <link rel="canonical" href="https://julenka.github.io/https://julenka.github.io//publications/2014/05/04/engagement/">
+
+    <!-- Bootstrap -->
+    <link href="https://julenka.github.io//bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://julenka.github.io//css/main.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://julenka.github.io//bower_components/jquery/dist/jquery.js"></script>
+    <!-- jQuery UI (used to do a nice animation of the Julia avatar -->
+    <script src="https://julenka.github.io//bower_components/jquery-ui/jquery-ui.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://julenka.github.io//bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+
+<body>
+<div id="wrap">
+    <div class="navbar" >
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a class="no-decoration" href="/"  id="home_link" >
+                        <div style="display: inline-block">
+                            <img src="/assets/avatar.svg" id="avatar" width="30px" height="30px"
+                                 style="margin-top:-8px;">
+                            Julia Schwarz
+                        </div>
+
+
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <img src="https://julenka.github.io//assets/engagement/engagement-header.jpeg" class="img-responsive post-header bottom-spacing center-block">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <h3> Replacing 'Wave to Engage' on Xbox One by Combining Body Pose, Gaze and Motion to Determine Intention to Interact </h3>
+
+                
+                    <div class="clearfix bottom-spacing-small">Schwarz, J., Marais, C., Leyvand, T., Hudson, S., Mankoff, J. Combining Body Pose, Gaze and Motion to Determine Intention to Interact in Vision-Based Interfaces. In Proceedings of the 32nd Annual SIGCHI Conference on Human Factors in Computing Systems (Toronto, Canada, April 26 - May 1, 2014). CHI '14. ACM, New York, NY.</div>
+                
+
+                <div class="clearfix bottom-spacing">
+                    
+                    <a href="https://julenka.github.io//assets/engagement/schwarz-chi14-engagement.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        paper</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="http://www.youtube.com/watch?v=-p_Y_WXmGTw&feature=share&list=UUkSKRWCm-dcQe7YfftWRfHQ">
+                        <span class="glyphicon glyphicon-film"></span>
+                        video summary</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+
+                    
+                    <a href="https://julenka.github.io//assets/engagement/engagement-chi14-presentation.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        slides</a>
+                    <span class="h-divider"></span>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    <div class="col-md-6 bottom-spacing">
+        <p>This was one of the projects I worked one while working as as researcher at Microsoft Xbox on the team responsible for shipping
+            skeletal tracking and other APIs leveraging the Kinect. It was 11 months before the release of the Xbox One,
+        and our aim was to develop a simple but robust method to engage and disengage with the Kinect. The previous 'wave to engage'
+        gesture on Xbox 360 was robust but difficult to trigger. We wanted something simpler but which maintained the same low
+        false positive rate.</p>
+        <p>A colleague (Claude Marais) had developed a prototype that combined facial features, body pose and motion to generate
+            and 'intention to interact score' which approximated
+            a user’s intention to interact with the system. The idea was that this 'intention to interact' score could then be
+            combined with a simple gesture to determine engagement, and could be used in concert with a threshold to determine
+            disengagement.
+        </p>
+        <p>
+            I refined the initial algorithm and then ran a 30-person lab study to compare four engagement
+            algorithms in single and multi-user scenarios. I found that combining intention to interact with a
+            “raise an open hand in front of you” gesture yielded the best results. The latter approach offered
+            a 12% improvement in accuracy and a 20% reduction in time to engage over a baseline “wave to engage”
+            gesture used on the Xbox 360.
+            The results of this work helped to replace the ‘wave to engage’ gesture on Xbox One.
+        </p>
+    </div>
+    <div class="col-md-6">
+        <iframe width="560" height="315" style="height: 315px; max-width: 560px;" class="center-block img-responsive" src="//www.youtube.com/embed/-p_Y_WXmGTw?rel=0" frameborder="0" allowfullscreen></iframe>
+        <div class="figure_caption top-spacing">
+            <small>Fig 1. Project Overview </small>
+        </div>
+    </div>
+
+</div>
+<div class="row bottom-spacing">
+    <div class="col-md-6">
+
+        <h3>Demonstrating Improvement over 'Wave to Engage'</h3>
+        <p>The most difficult part of the project was running a user study to demonstrate the algorithm's improvement
+        over 'wave to engage' on Xbox 360. To do this, I did the following:</p>
+        <ul>
+            <li>Implement a port of the 'wave to engage' gesture from Xbox 360. One of the many perks of working at
+            Microsoft was having direct access to the code.</li>
+            <li>Implement intention to interact computation, along with all 4 methods of engagement.</li>
+            <li>Hook the engagement algorithms into a simple 'bop-the-mole' game used for the study, complete with
+            logging (I recorded everything so that I could replay runs later, which came in handy). This was done using
+            DirectX and an early version of the Kinect API for Xbox One. The study ran on an Xbox One.</li>
+            <li>Ran a 40-person lab study with tasks aiming to be as comprehensive as possible while remaining in the
+            confounds of a lab.</li>
+            <li>Analyze the massive amount of data, which included learning some new statistical tests and developing and running
+            a hypothetical engagement task (raise hand up without the score), which I then ran all my pre-recorded data against.</li>
+        </ul>
+        <p>A detailed description of the study, along with results are in the <a href="https://julenka.github.io//assets/engagement/schwarz-chi14-engagement.pdf">paper</a>,
+            but the short summary is that using
+        an engagement score does lead to faster engagement time compared to wave to engage, with engagement score + simple gesture
+        yielding the best results.</p>
+    </div>
+    <div class="col-md-6 bottom-spacing">
+        <h3>Acknowledgements</h3>
+        <p>Thank you to my manager at Microsoft, Tommer Leyvand, for letting me pursue and publish the work.</p>
+        <p>Thank you to Tyler Murphy for his illustration of Figure 1 in the paper.</p>
+        <p>Header image credit: <a href="http://marketplace.xbox.com/en-US/Product/Harry-Potter-for-Kinect/">Harry Potter for Kinect</a></p>
+    </div>
+</div>
+
+
+
+        <!-- Generate some more breathing room near the bottom -->
+        <div class="row">
+            <div class="col-xs-12 top-spacing bottom-spacing">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="push"></div>
+
+</div>
+<div id="footer">
+    <div class="container">
+        <!-- TODO: Acknowledge http://ryanfait.com/sticky-footer/ for the sticky footer -->
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <p class="text-muted">
+                        <span class="hidden-xs">&copy; 2015 Julia Schwarz</span>
+                        <a href="/">Home</a>
+                        <!-- <a href=" /archives ">Archives</a> -->
+                        <a href=" /acknowledgements ">Acknowledgements</a>
+                    </p>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-538350-7']);
+    _gaq.push(['_setDomainName', 'none']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+
+
+<script>
+    $(window).load(function(){
+        var $avatar = $("#avatar");
+        var start_top = parseInt($avatar.css("margin-top"));
+        var bounce_height1 = 30;
+        var bounce_height2 = 5;
+        var duration1 = 100;
+        var duration2 = 60;
+        $("#home_link").mouseenter(function(){
+            console.log("animate", start_top);
+            $avatar
+                    .animate({ "margin-top": start_top-bounce_height1}, duration1, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration1, "easeInQuad")
+                    .animate({ "margin-top": start_top-bounce_height2}, duration2, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration2, "easeInQuad");
+        });
+    });
+</script>
+</body>
+</html>

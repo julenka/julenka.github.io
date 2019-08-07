@@ -1,0 +1,235 @@
+
+/** Index Header **/
+
+.top_wrapper_bg {
+    position:absolute;
+    z-index: -1;
+    background-repeat: repeat-x;
+}
+
+.top_wrapper_right, .top_wrapper_left {
+    background-repeat: repeat-x;
+}
+
+.top_wrapper_center {
+    background-position: 0px 0px;
+    /*background-image: url('../assets/banner_top_lg/banner_top_center.jpg');*/
+    background-repeat: no-repeat;
+    padding-bottom: 0px;
+    height: 513px;
+    color: white;
+}
+
+#top_container {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+
+.title {
+    margin-top: 170px;
+}
+
+.light {
+    color: #999;
+}
+
+.hero {
+    background-color: rgba(0,0,0,0.65);
+    padding: 15px;
+
+    top: 72px;
+
+    /* box shadow */
+    /* http://www.cssmatic.com/box-shadow */
+    -webkit-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    -moz-box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+    box-shadow: 0px 0px 5px 0px rgba(0,0,0,0.75);
+}
+
+.hero_bottom {
+    margin-top: 20px;
+    width: 75%;
+    margin-right: auto;
+    margin-left: auto;
+
+}
+
+.hero_bottom img {
+    height: 30px;
+    margin-bottom: 5px;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.hero_bottom div {
+    text-align: center;
+}
+
+.hero_bottom p {
+    height: 100%;
+}
+
+
+/** Main **/
+.navbar {
+    /*margin-top:30px;*/
+    width: 100%;
+    /*background-color: #FFFFFF;*/
+    /*background-color: #422E4B;*/
+    /*background-color: #8742A7;*/
+    background-color: #654199;
+    font-size: 18px;
+    font-family: Helvetica Neue, Helvetica, Arial;
+    font-weight: lighter;
+    border-radius: 0px;
+    padding-top:13px;
+}
+
+.navbar a.no-decoration, .navbar a.no-decoration:hover{
+    text-decoration: none;
+    /*color: #422E4B;*/
+    color: #fff;
+}
+
+a.underline {
+    border-bottom: 1px dotted white;
+}
+
+.hero a.no-decoration, .hero a.no-decoration:hover{
+    text-decoration: none;
+    color: #fff;
+}
+
+.figure_caption {
+    text-align: center;
+}
+
+.card {
+    padding-top: 30px;
+    padding-bottom: 26px;
+    line-height: 17px;
+}
+
+.card h3 {
+    margin-top: -4px;
+    font-size: 20px;
+}
+
+#apps {
+    margin-top: 60px;
+}
+
+a {
+    /*color: #896CB1;*/
+    /*color: #7C54B1;*/
+    /*color: #735B94;*/
+    /*color: #8956D1;*/
+    color: #9D78D1;
+    /*color: #9C72D5;*/
+}
+a:hover {
+    text-decoration: none;
+    color: #53416B;
+    color: #777;
+}
+
+a.no-decoration{
+    text-decoration: none;
+    color: #333;
+}
+a.no-decoration:hover{
+    text-decoration: none;
+    color: #777;
+}
+
+.bottom-spacing {
+    padding-bottom: 20px;
+}
+.bottom-spacing-small {
+    padding-bottom: 10px;
+}
+.top-spacing {
+    padding-top: 20px;
+}
+
+.left-spacing {
+    padding_left: 7px;
+}
+
+.icon-detail {
+    vertical-align: middle;
+}
+
+.icon-detail img {
+    display: inline-block;
+    height: 14px;
+}
+
+.post-header {
+    margin-top:10px;
+}
+
+.h-divider {
+    padding-right: 25px;
+}
+
+/** Footer **/
+
+
+/* Sticky footer styles
+-------------------------------------------------- */
+
+html,
+body {
+    height: 100%;
+    font-family: "Segoe UI","proxima-nova","proxima-nova-1","proxima-nova-2","Proxima Nova",Helvetica,Arial,sans-serif
+    /* The html and body elements cannot have any padding or margin. */
+}
+
+/* Wrapper for page content to push down footer */
+#wrap {
+    min-height: 100%;
+    height: auto !important;
+    height: 100%;
+    /* Negative indent footer by it's height */
+    margin: 0 auto -60px;
+}
+
+/* Set the fixed height of the footer here */
+#push,
+#footer {
+    height: 60px;
+}
+
+/* Lastly, apply responsive CSS fixes as necessary */
+/*@media (max-width: 767px) {*/
+    /*#footer {*/
+        /*margin-left: -20px;*/
+        /*margin-right: -20px;*/
+        /*padding-left: 20px;*/
+        /*padding-right: 20px;*/
+    /*}*/
+/*}*/
+
+#footer {
+    /*margin-top:30px;*/
+    width: 100%;
+    background-color: #DED6E9;
+    color: #111;
+}
+
+.text-muted {
+    margin: 20px 0;
+    color: #422E4B;
+}
+
+.text-muted a {
+    margin-left: 10px;
+    /*color: #422E4B;*/
+    /*border-bottom: 1px dotted #422E4B;*/
+}
+
+.text-muted a:hover {
+    text-decoration: none;
+}

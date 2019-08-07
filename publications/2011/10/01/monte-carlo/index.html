@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Monte Carlo Methods for Managing Interactive State, Action and Feedback Under Uncertainty</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Julia Schwarz portfolio and personal website">
+    <link rel="canonical" href="https://julenka.github.io/https://julenka.github.io//publications/2011/10/01/monte-carlo/">
+
+    <!-- Bootstrap -->
+    <link href="https://julenka.github.io//bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://julenka.github.io//css/main.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://julenka.github.io//bower_components/jquery/dist/jquery.js"></script>
+    <!-- jQuery UI (used to do a nice animation of the Julia avatar -->
+    <script src="https://julenka.github.io//bower_components/jquery-ui/jquery-ui.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://julenka.github.io//bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+
+<body>
+<div id="wrap">
+    <div class="navbar" >
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a class="no-decoration" href="/"  id="home_link" >
+                        <div style="display: inline-block">
+                            <img src="/assets/avatar.svg" id="avatar" width="30px" height="30px"
+                                 style="margin-top:-8px;">
+                            Julia Schwarz
+                        </div>
+
+
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <h3> Monte Carlo Methods for Managing Interactive State, Action and Feedback Under Uncertainty </h3>
+
+                
+                    <div class="clearfix bottom-spacing-small">Schwarz, J., Mankoff, J., Hudson, S., Monte Carlo Methods for Managing Interactive State, Action and Feedback Under Uncertainty. In Proceedings of 24th Annual ACM Symposium on User Interface Software and Technology (Santa Barbara, California, October 16-19, 2011). UIST ’11. ACM, New York, NY, 235 - 244.</div>
+                
+
+                <div class="clearfix bottom-spacing">
+                    
+                    <a href="https://julenka.github.io//assets/monte-carlo/schwarz-uist11-montecarlo.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        paper</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="https://www.youtube.com/watch?v=vW15T1wDcGQ">
+                        <span class="glyphicon glyphicon-film"></span>
+                        video summary</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    <div class="col-md-6">
+        <p>
+            This paper is the second of three research papers published as part of my <a href="https://julenka.github.io//publications/2015/06/05/dissertation/">PhD thesis</a>.
+        </p>
+        <p>
+            One challenge I ran into when implementing the demos for my <a href="https://julenka.github.io//publications/2010/10/02/probabilistic-input/">
+            first paper</a> was that I found it difficult to
+            track that state of any user interface element that had more than two states.  The aim of this paper was to modify the initial architecture to
+            make it easy for developers to track the probabilistic state of user interface elements.
+        </p>
+        <p>
+            The key insight in this paper was to use  a Monte Carlo approach to maintain a
+            probabilistically accurate description of the user interface that can be used to make informed choices about
+            actions. Samples are used to approximate the distribution of possible inputs, possible interactor states that
+            result from inputs, and possible actions (callbacks and feedback) interactors may execute.
+        </p>
+        <p>
+            For example, a touch event is often represented as a single point, but in fact the finger is touching an entire area. My system approximates this distribution by generating a collection of individual touch events (Figure 2).
+        </p>
+            <img class="img-responsive center-block top-spacing" src="https://julenka.github.io//assets/monte-carlo/finger-gaussian-samples.png">
+            <div class="figure_caption top-spacing bottom-spacing ">
+                <small>Figure 1. A single touch is 
+                modeled using a cloud of possible touch events. The system simulates what might happen to each possible
+                event to decide what to do next.
+                </small>
+            </div>
+        <p>
+            Because each sample is certain, the developer can specify most of the behavior of interactors in a familiar,
+            non-probabilistic fashion. This approach retains all the advantages of maintaining information about uncertainty
+            while minimizing the need for the developer to work in probabilistic terms. This paper presents a working implementation
+            of our framework and illustrates the power of these techniques within a paint program that includes three
+            different kinds of uncertain input.
+        </p>
+        
+
+    </div>
+    <div class="col-md-6">
+        <img class="img-responsive center-block" src="https://julenka.github.io//assets/monte-carlo/monte-carlo-banner2.jpeg">
+            <div class="figure_caption top-spacing bottom-spacing ">
+                <small>Probabilistic input events are sampled to produce a collection of possible input events. Each input event is dispatched and interface state is updated. Interface updated, creates a collection of possible actions. These actions are then resolved according to a configurable set of rules.
+                </small>
+            </div>
+        <iframe width="420" height="315" class="center-block img-responsive top-spacing" style="height: 315px;" src="//www.youtube.com/embed/vW15T1wDcGQ?rel=0" frameborder="0" allowfullscreen></iframe>
+        <div class="figure_caption top-spacing ">
+            <small>This video summary contains a demonstration of the capabilities of the framework as well as an explanation of the architecture. </small>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+        <!-- Generate some more breathing room near the bottom -->
+        <div class="row">
+            <div class="col-xs-12 top-spacing bottom-spacing">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="push"></div>
+
+</div>
+<div id="footer">
+    <div class="container">
+        <!-- TODO: Acknowledge http://ryanfait.com/sticky-footer/ for the sticky footer -->
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <p class="text-muted">
+                        <span class="hidden-xs">&copy; 2015 Julia Schwarz</span>
+                        <a href="/">Home</a>
+                        <!-- <a href=" /archives ">Archives</a> -->
+                        <a href=" /acknowledgements ">Acknowledgements</a>
+                    </p>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-538350-7']);
+    _gaq.push(['_setDomainName', 'none']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+
+
+<script>
+    $(window).load(function(){
+        var $avatar = $("#avatar");
+        var start_top = parseInt($avatar.css("margin-top"));
+        var bounce_height1 = 30;
+        var bounce_height2 = 5;
+        var duration1 = 100;
+        var duration2 = 60;
+        $("#home_link").mouseenter(function(){
+            console.log("animate", start_top);
+            $avatar
+                    .animate({ "margin-top": start_top-bounce_height1}, duration1, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration1, "easeInQuad")
+                    .animate({ "margin-top": start_top-bounce_height2}, duration2, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration2, "easeInQuad");
+        });
+    });
+</script>
+</body>
+</html>

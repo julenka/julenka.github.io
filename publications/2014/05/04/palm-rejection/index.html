@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Probabilistic Palm Rejection Using Spatiotemporal Touch Features and Iterative Classification</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Julia Schwarz portfolio and personal website">
+    <link rel="canonical" href="https://julenka.github.io/https://julenka.github.io//publications/2014/05/04/palm-rejection/">
+
+    <!-- Bootstrap -->
+    <link href="https://julenka.github.io//bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://julenka.github.io//css/main.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://julenka.github.io//bower_components/jquery/dist/jquery.js"></script>
+    <!-- jQuery UI (used to do a nice animation of the Julia avatar -->
+    <script src="https://julenka.github.io//bower_components/jquery-ui/jquery-ui.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://julenka.github.io//bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+
+<body>
+<div id="wrap">
+    <div class="navbar" >
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a class="no-decoration" href="/"  id="home_link" >
+                        <div style="display: inline-block">
+                            <img src="/assets/avatar.svg" id="avatar" width="30px" height="30px"
+                                 style="margin-top:-8px;">
+                            Julia Schwarz
+                        </div>
+
+
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <img src="https://julenka.github.io//assets/palm-rejection/palm-rejection-header.jpeg" class="img-responsive post-header bottom-spacing center-block">
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <h3> Probabilistic Palm Rejection Using Spatiotemporal Touch Features and Iterative Classification </h3>
+
+                
+                    <div class="clearfix bottom-spacing-small">Schwarz, J., Xiao, R., Mankoff, J., Hudson, S., Harrison, C. Probabilistic Palm Rejection Using Spatiotemporal Touch Features and Iterative Classification. In Proceedings of the 32nd Annual SIGCHI Conference on Human Factors in Computing Systems (Toronto, Canada, April 26 - May 1, 2014). CHI '14. ACM, New York, NY.</div>
+                
+
+                <div class="clearfix bottom-spacing">
+                    
+                    <a href="https://julenka.github.io//assets/palm-rejection/schwarz-chi14-palmrejection.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        paper</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="http://youtu.be/uKJYT0eorRU">
+                        <span class="glyphicon glyphicon-film"></span>
+                        video summary</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="http://youtu.be/WZ1uaoi2s9o" target="_blank">
+                        <span class="glyphicon glyphicon-film"></span>
+                        talk</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="https://julenka.github.io//assets/palm-rejection/palm-rejection-presentation.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        slides</a>
+                    <span class="h-divider"></span>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    <div class="col-md-6 bottom-spacing">
+        <p>
+            Tablet computers are often called upon to emulate classical pen-and-paper input. However, touchscreens typically lack
+            the means to distinguish between legitimate touches with the palm or other parts of
+            the hand. Users are then forced to rest their palms elsewhere or hover above the screen, resulting in ergonomic and
+            usability problems.
+        </p>
+        <p>
+            We developed an algorithm for distinguishing unintentional (palm) touches from intentional (stylus/finger)
+            touches. The algorithm uses machine learning to train decision trees that examine the evolution of basic touch properties (touch area, velocity, distance to other touches)
+            over short time sequences. Implementations are available for both iOS and Android.
+        </p>
+        <p>
+            We compared our iOS implementation against two iOS applications: <a href="http://bamboopaper.wacom.com/">
+            Bamboo Paper </a> and <a href="http://evernote.com/penultimate/">Penultimate</a>, and found that our
+            algorithm outperformed both applications, reducing accidental palm inputs to 0.016 per
+            pen stroke, while correctly passing 98% of stylus inputs. See our <a href="https://julenka.github.io//assets/palm-rejection/schwarz-chi14-palmrejection.pdf">
+            paper</a> for details.
+        </p>
+        <p>
+            Palm rejection is a <a href="http://www.qeexo.com">Qeexo</a> technology. To arrange a demo, please email
+            <a href="mailto:info@qeexo.com">info@qeexo.com</a>.
+
+        </p>
+
+    </div>
+    <div class="col-md-6">
+            <video class="img-responsive center-block" src="https://julenka.github.io//assets/palm-rejection/demo_480p.mov" loop muted controls></video>
+            <div class="figure_caption top-spacing">
+                <small>Figure 1. Demonstration of palm rejection running on an iPad. The algorithm initially guesses palms as pads, then
+                    refines its guess as more data becomes available. </small>
+            </div>
+    </div>
+
+</div>
+<div class="row">
+    <div class="col-md-12">
+        <h3>How it Works</h3>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+        <p>To better understand the palm rejection algorithm, let's first take a look at what
+            your device sees when the hand is down (Figure 2). Here the green dot is the intentional input, and the blue dots
+            are unintentional palm inputs.</p>
+        <p>Several properties distinguishing intentional from unintentional inputs immediately jump out:</p>
+        <ul>
+            <li>Radius of the touch (<a href="https://developer.apple.com/library/prerelease/ios/documentation/UIKit/Reference/UITouch_Class/index.html#//apple_ref/occ/instp/UITouch/majorRadius">now available for iOS 8</a>!)</li>
+            <li>Speed of touch motion (palms tend to stay put)</li>
+            <li>Distance to other touches (palms are clumped together)</li>
+        </ul>
+        <p>
+            Rather than examining these properties instantaneously (on touch down) and performing immediate classification,
+            our algorithm makes an initial guess, then refines this guess every 50 ms until 500 ms has elapsed, at which point
+            a final decision is made by examining the votes at each 50ms interval.
+        </p>
+    </div>
+    <div class="col-md-6">
+
+        <video src="https://julenka.github.io//assets/palm-rejection/palm_raw_data1.mov" style="height: 250px" controls  loop
+               class="center-block img-responsive top-spacing bottom-spacing"></video>
+
+        <div class="top-spacing figure_caption bottom-spacing">
+            <small>Figure 2. Visualization of what device sees when user is writing, resting their palm.</small>
+        </div>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-6">
+
+
+        <p>
+            At each time step <em>t</em>, we examine touch point behavior over a time window from <em>-t</em> to <em>t</em>, taking
+            the mean, standard deviation, and range of the touch radius, touch velocity, and distance to other touches (Figure 2). These behavior
+            metrics, or <em>features</em> are then fed into a previously trained decision tree and a classification (intentional or
+            unintentional input) is made.
+        </p>
+        <p>
+            Performing regular classification has the benefit of providing a guess which can then be used to provide feedback to the
+            user, which might then be altered. Figure 1 shows a video of our application demonstrating this behavior: palm touches
+            are initially guessed as styluses and are later removed. Because in most cases the palm occludes these temporary guesses,
+            the user is often unaware of this guessing behavior.
+        </p>
+    </div>
+    <div class="col-md-6">
+
+
+        <img src="https://julenka.github.io//assets/palm-rejection/palm-rejection-fig2.png" class="img-responsive top-spacing">
+        <div class="top-spacing figure_caption">
+            <small>Figure 3. Classification is performed every 50ms. For every time interval <em>t</em> a window from <em>-t</em> to <em>t</em>
+                is examined.</small>
+        </div>
+
+    </div>
+</div>
+
+<div class="row">
+    <div class="col-md-6">
+        <h3>Source Code</h3>
+        <p>Source code for the binary classifiers used and feature computation can be downloaded <a href="https://julenka.github.io//assets/palm-rejection/schwarz-julia-palmrjection-classify-features.zip">here</a>.</p>
+    </div>
+    <div class="col-md-6">
+        <h3>Acknowledgements</h3>
+        Thank you to Sang Won Lee for allowing my colleagues and me to publish the work we performed at Qeexo.
+    </div>
+</div>
+
+
+        <!-- Generate some more breathing room near the bottom -->
+        <div class="row">
+            <div class="col-xs-12 top-spacing bottom-spacing">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="push"></div>
+
+</div>
+<div id="footer">
+    <div class="container">
+        <!-- TODO: Acknowledge http://ryanfait.com/sticky-footer/ for the sticky footer -->
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <p class="text-muted">
+                        <span class="hidden-xs">&copy; 2015 Julia Schwarz</span>
+                        <a href="/">Home</a>
+                        <!-- <a href=" /archives ">Archives</a> -->
+                        <a href=" /acknowledgements ">Acknowledgements</a>
+                    </p>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-538350-7']);
+    _gaq.push(['_setDomainName', 'none']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+
+
+<script>
+    $(window).load(function(){
+        var $avatar = $("#avatar");
+        var start_top = parseInt($avatar.css("margin-top"));
+        var bounce_height1 = 30;
+        var bounce_height2 = 5;
+        var duration1 = 100;
+        var duration2 = 60;
+        $("#home_link").mouseenter(function(){
+            console.log("animate", start_top);
+            $avatar
+                    .animate({ "margin-top": start_top-bounce_height1}, duration1, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration1, "easeInQuad")
+                    .animate({ "margin-top": start_top-bounce_height2}, duration2, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration2, "easeInQuad");
+        });
+    });
+</script>
+</body>
+</html>

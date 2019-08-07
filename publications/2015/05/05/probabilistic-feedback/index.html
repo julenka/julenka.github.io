@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>An Architecture for Generating Interactive Feedback in Probabilistic User Interfaces</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="Julia Schwarz portfolio and personal website">
+    <link rel="canonical" href="https://julenka.github.io/https://julenka.github.io//publications/2015/05/05/probabilistic-feedback/">
+
+    <!-- Bootstrap -->
+    <link href="https://julenka.github.io//bower_components/bootstrap/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="https://julenka.github.io//css/main.css">
+
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://julenka.github.io//bower_components/jquery/dist/jquery.js"></script>
+    <!-- jQuery UI (used to do a nice animation of the Julia avatar -->
+    <script src="https://julenka.github.io//bower_components/jquery-ui/jquery-ui.js"></script>
+
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="https://julenka.github.io//bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+
+</head>
+
+
+<body>
+<div id="wrap">
+    <div class="navbar" >
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <a class="no-decoration" href="/"  id="home_link" >
+                        <div style="display: inline-block">
+                            <img src="/assets/avatar.svg" id="avatar" width="30px" height="30px"
+                                 style="margin-top:-8px;">
+                            Julia Schwarz
+                        </div>
+
+
+                    </a>
+                </div>
+
+            </div>
+        </div>
+    </div>
+    <div class="container">
+        
+        <div class="row">
+            <div class="col-xs-12">
+                <h3> An Architecture for Generating Interactive Feedback in Probabilistic User Interfaces </h3>
+
+                
+                    <div class="clearfix bottom-spacing-small">Schwarz, J., Mankoff, J., Hudson, S., An Architecture for Generating Interactive Feedback in Probabilistic User Interfaces. In Proceedings of the 33rd Annual ACM Conference on Human Factors in Computing Systems (Seoul, Korea, April 18 - 23, 2015). CHI ’15. ACM, New York, NY, 2545 - 2554.</div>
+                
+
+                <div class="clearfix bottom-spacing">
+                    
+                    <a href="https://julenka.github.io//assets/probabilistic-feedback/schwarz-chi15-probabilisticfeedback.pdf">
+                        <span class="glyphicon glyphicon-file"></span>
+                        paper</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+                    <a href="http://youtu.be/1SzLxofVWV8">
+                        <span class="glyphicon glyphicon-film"></span>
+                        video summary</a>
+                    <span class="h-divider"></span>
+                    
+
+                    
+
+                    
+                </div>
+            </div>
+        </div>
+        <div class="row">
+    <div class="col-md-6">
+        <p>
+            This paper is the third of three research papers published as part of my <a href="https://julenka.github.io//publications/2015/06/05/dissertation/">PhD thesis</a>.
+        </p>
+        <p>
+            Increasingly natural, sensed, and touch-based input is being integrated into devices. Along the way, both custom and
+            more general solutions have been developed for dealing with the uncertainty that is associated with these forms of
+            input. However, it is difficult to provide dynamic, flexible, and continuous feedback about uncertainty using traditional
+            interactive infrastructure. Our contribution is a general architecture with the goal of providing support for continual
+            feedback about uncertainty.
+        </p>
+        <p>
+            Our architecture  tracks multiple
+            interfaces – one for each plausible and differentiable sequence of input that the user may have intended. This paper
+            presents a method for reducing the number of alternative interfaces and fusing possible interfaces into a single
+            interface that both communicates uncertainty and allows for disambiguation. 
+        </p>
+        <p>
+            Rather than tracking a single interface state (as is currently done in most UI toolkits), we keep track of several
+            possible interfaces. Each possible interface represents a state that the interface might be in.
+            The likelihood of each possible interface is updated based on user inputs and our knowledge of user behavior. Feedback to the user is rendered by first reducing the set of possible interfaces to a representative set, then fusing interface
+            alternatives into a single interface, which is then rendered.
+        </p>
+        <img class="img-responsive center-block top-spacing bottom-spacing" 
+                src="https://julenka.github.io//assets/probabilistic-feedback/probabilistic-feedback-splash.png">
+
+            <div class="top-spacing figure_caption bottom-spacing">
+                <small> We start with a distribution of possible interfaces, then identify differences between interfaces
+                by comparing objects in the interactor hierarchy. Interfaces are then reduced to  a small set of exemplars, and
+                fused into a single interface using one of a nubmer of strategies.</small>
+            </div>   
+        <p>
+            We demonstrate the value of our architecture
+            through a collection of new and existing feedback techniques. The figures on the right show a few example interactions our architecture enables. In each demonstration, several possible interfaces are tracked. These possible interfaces are then fused into a single interface and presented to the user.
+        </p>
+
+    </div>
+    <div class="col-md-6">
+            <img class="img-responsive center-block" 
+                src="https://julenka.github.io//assets/probabilistic-feedback/nbest_gesture_420.gif">
+
+            <div class="top-spacing figure_caption bottom-spacing">
+                <small>Auto-correct. As I draw letters, a gesture recognizer tries to 
+                guess which shapes I drew. I can correct the recognizer by selecting an alternative. </small>
+            </div>        
+            <img class="img-responsive center-block" 
+                src="https://julenka.github.io//assets/probabilistic-feedback/snap_480p.gif">
+
+            <div class="top-spacing figure_caption bottom-spacing">
+                <small> Smart snap. As I draw lines and shapes, the app predicts possible targets to snap to
+                and gives me the option to choose a prediction. Of course, I can ignore these suggestions if I wish. </small>
+            </div>  
+    </div>  
+
+
+        <!-- Generate some more breathing room near the bottom -->
+        <div class="row">
+            <div class="col-xs-12 top-spacing bottom-spacing">
+
+            </div>
+        </div>
+    </div>
+
+    <div id="push"></div>
+
+</div>
+<div id="footer">
+    <div class="container">
+        <!-- TODO: Acknowledge http://ryanfait.com/sticky-footer/ for the sticky footer -->
+            <div class="row">
+                <div class="col-sm-12 text-center">
+                    <p class="text-muted">
+                        <span class="hidden-xs">&copy; 2015 Julia Schwarz</span>
+                        <a href="/">Home</a>
+                        <!-- <a href=" /archives ">Archives</a> -->
+                        <a href=" /acknowledgements ">Acknowledgements</a>
+                    </p>
+                </div>
+            </div>
+
+    </div>
+</div>
+
+<!-- Google Analytics -->
+<script type="text/javascript">
+    var _gaq = _gaq || [];
+    _gaq.push(['_setAccount', 'UA-538350-7']);
+    _gaq.push(['_setDomainName', 'none']);
+    _gaq.push(['_setAllowLinker', true]);
+    _gaq.push(['_trackPageview']);
+
+    (function() {
+        var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+        ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+        var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+    })();
+</script>
+
+
+
+
+<script>
+    $(window).load(function(){
+        var $avatar = $("#avatar");
+        var start_top = parseInt($avatar.css("margin-top"));
+        var bounce_height1 = 30;
+        var bounce_height2 = 5;
+        var duration1 = 100;
+        var duration2 = 60;
+        $("#home_link").mouseenter(function(){
+            console.log("animate", start_top);
+            $avatar
+                    .animate({ "margin-top": start_top-bounce_height1}, duration1, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration1, "easeInQuad")
+                    .animate({ "margin-top": start_top-bounce_height2}, duration2, "easeOutQuad")
+                    .animate({ "margin-top": start_top}, duration2, "easeInQuad");
+        });
+    });
+</script>
+</body>
+</html>

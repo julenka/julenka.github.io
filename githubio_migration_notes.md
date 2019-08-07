@@ -1,12 +1,44 @@
+finish script to deploy
+save/finalize notes
+
 # My notes
 The generated/compiled html pages are now at https://github.com/julenka/julenka.github.io
 The content for my html is still at git@github.com:julenka/jsnet.git.
-I will use Jekyll to compile html from jsnet folder into julenka.github.io.
+I use Jekyll to compile html from jsnet folder into julenka.github.io.
+
+## Update domain 
+I want to make https://juliaschwrz.net and www.juliaschwarz.net point to julenka.github.io
+Following https://help.github.com/en/articles/using-a-custom-domain-with-github-pages
+
+Setting up an apex domain and www subdomain
+You can set up an apex domain and a www subdomain through your DNS provider and GitHub Pages' servers will automatically create redirects between them. For example, your site can be found at www.example.com or example.com.
+
+1. [Add the custom domain to github pages](https://help.github.com/en/articles/adding-or-removing-a-custom-domain-for-your-github-pages-site)
+2. [Set up the apex domain juliaschwarz.net](https://help.github.com/en/articles/setting-up-an-apex-domain). I updated my A record to point to the following addresses
+
+    185.199.108.153
+    185.199.109.153
+    185.199.110.153
+    185.199.111.153
+
+And then tested as follows: 
+
+    > dig +noall +answer juliaschwarz.net
+    juliaschwarz.net.	14399	IN	A	185.199.110.153
+    juliaschwarz.net.	14399	IN	A	185.199.109.153
+    juliaschwarz.net.	14399	IN	A	185.199.111.153
+    juliaschwarz.net.	14399	IN	A	185.199.108.153
+
+I then waited 3 hours and saw my domains were updated!
+
+3. Enable https. Finally I checked the "enable https" option in the github pages section of https://github.com/julenka/julenka.github.io/settings.
+
 
 
 # David's notes
 My website is hosted by GitHub Pages.
 My domain used to be configured with Bluehost (see below for Google Domains info).
+
 
 Go to Bluehost’s Domain Manager and click on Manage DNS Records to make changes for a domain (AKA Zone Editor). 
 This was needed to set up the domain to point to GitHub’s page initially.

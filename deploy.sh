@@ -25,7 +25,7 @@ rsync -avu _site/ $PAGES_REPO_PATH
 pushd $PAGES_REPO_PATH
 DATESTR=$(date)
 git add .
-git commit -m "Update site $DATE"
+git commit -m "Update site $DATESTR"
 git push
 popd
 

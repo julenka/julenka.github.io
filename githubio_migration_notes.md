@@ -1,19 +1,15 @@
-finish script to deploy
-save/finalize notes
-
 # My notes
 The generated/compiled html pages are now at https://github.com/julenka/julenka.github.io
-The content for my html is still at git@github.com:julenka/jsnet.git.
+The content for my html is still at https://github.com/julenka/jsnet
 I use Jekyll to compile html from jsnet folder into julenka.github.io.
 
 ## Update domain 
-I want to make https://juliaschwrz.net and www.juliaschwarz.net point to julenka.github.io
-Following https://help.github.com/en/articles/using-a-custom-domain-with-github-pages
+I want to make https://juliaschwrz.net and https://www.juliaschwarz.net point to julenka.github.io
+I followed https://help.github.com/en/articles/using-a-custom-domain-with-github-pages here are my steps:
 
-Setting up an apex domain and www subdomain
-You can set up an apex domain and a www subdomain through your DNS provider and GitHub Pages' servers will automatically create redirects between them. For example, your site can be found at www.example.com or example.com.
 
-1. [Add the custom domain to github pages](https://help.github.com/en/articles/adding-or-removing-a-custom-domain-for-your-github-pages-site)
+1. [Add the custom domain to github pages](https://help.github.com/en/articles/adding-or-removing-a-custom-domain-for-your-github-pages-site). I updated the github pages config to point to juliaschwarz.net. This just updates a file called CNAME
+
 2. [Set up the apex domain juliaschwarz.net](https://help.github.com/en/articles/setting-up-an-apex-domain). I updated my A record to point to the following addresses
 
     185.199.108.153

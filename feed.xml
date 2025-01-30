@@ -1,0 +1,60 @@
+
+<?xml version="1.0" encoding="UTF-8"?>
+<feed xmlns:yt="http://www.youtube.com/xml/schemas/2015" xmlns:media="http://search.yahoo.com/mrss/" xmlns="http://www.w3.org/2005/Atom">
+ <link rel="self" href="http://www.youtube.com/feeds/videos.xml?channel_id=UCW22suSoHWumwarCbu3NkOg"/>
+ <id>yt:channel:W22suSoHWumwarCbu3NkOg</id>
+ <yt:channelId>W22suSoHWumwarCbu3NkOg</yt:channelId>
+ <title>Bellevue Television (Bellevue, Washington)</title>
+ <link rel="alternate" href="https://www.youtube.com/channel/UCW22suSoHWumwarCbu3NkOg"/>
+ <author>
+  <name>Bellevue Television (Bellevue, Washington)</name>
+  <uri>https://www.youtube.com/channel/UCW22suSoHWumwarCbu3NkOg</uri>
+ </author>
+ <published>2009-02-19T19:07:40+00:00</published>
+ <entry>
+  <id>yt:video:FiG2xkROL_k</id>
+  <yt:videoId>FiG2xkROL_k</yt:videoId>
+  <yt:channelId>UCW22suSoHWumwarCbu3NkOg</yt:channelId>
+  <title>Bellevue City Council Meeting - November 19, 2024</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=FiG2xkROL_k"/>
+  <author>
+   <name>Bellevue Television (Bellevue, Washington)</name>
+   <uri>https://www.youtube.com/channel/UCW22suSoHWumwarCbu3NkOg</uri>
+  </author>
+  <published>2024-11-21T21:32:27+00:00</published>
+  <updated>2024-12-22T14:24:17+00:00</updated>
+  <media:group>
+   <media:title>Bellevue City Council Meeting - November 19, 2024</media:title>
+   <media:content url="https://www.youtube.com/v/FiG2xkROL_k?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i3.ytimg.com/vi/FiG2xkROL_k/hqdefault.jpg" width="480" height="360"/>
+   <media:description></media:description>
+   <media:community>
+    <media:starRating count="0" average="0.00" min="1" max="5"/>
+    <media:statistics views="81"/>
+   </media:community>
+  </media:group>
+ </entry>
+ <entry>
+  <id>yt:video:DbFx4yq6lIQ</id>
+  <yt:videoId>DbFx4yq6lIQ</yt:videoId>
+  <yt:channelId>UCW22suSoHWumwarCbu3NkOg</yt:channelId>
+  <title>Bellevue City Council Meeting - November 12, 2024</title>
+  <link rel="alternate" href="https://www.youtube.com/watch?v=DbFx4yq6lIQ"/>
+  <author>
+   <name>Bellevue Television (Bellevue, Washington)</name>
+   <uri>https://www.youtube.com/channel/UCW22suSoHWumwarCbu3NkOg</uri>
+  </author>
+  <published>2024-11-13T20:21:29+00:00</published>
+  <updated>2024-12-20T14:39:39+00:00</updated>
+  <media:group>
+   <media:title>Bellevue City Council Meeting - November 12, 2024</media:title>
+   <media:content url="https://www.youtube.com/v/DbFx4yq6lIQ?version=3" type="application/x-shockwave-flash" width="640" height="390"/>
+   <media:thumbnail url="https://i1.ytimg.com/vi/DbFx4yq6lIQ/hqdefault.jpg" width="480" height="360"/>
+   <media:description></media:description>
+   <media:community>
+    <media:starRating count="0" average="0.00" min="1" max="5"/>
+    <media:statistics views="103"/>
+   </media:community>
+  </media:group>
+ </entry>
+</feed>

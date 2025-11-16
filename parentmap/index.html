@@ -1,0 +1,1650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ParentMap Events Viewer</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary-color: #2563eb;
+            --secondary-color: #7c3aed;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-primary: #1e293b;
+            --text-secondary: #64748b;
+            --border-color: #e2e8f0;
+            --badge-editors: #f59e0b;
+            --badge-free: #10b981;
+            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+            --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 30px 20px;
+            margin-bottom: 30px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        header h1 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        header p {
+            font-size: 1rem;
+            opacity: 0.9;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .copy-link-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .copy-link-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+            transform: translateY(-1px);
+        }
+
+        .copy-link-btn.copied {
+            background: rgba(16, 185, 129, 0.3);
+            border-color: rgba(16, 185, 129, 0.5);
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .stat {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 8px 16px;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            backdrop-filter: blur(10px);
+        }
+
+        .debug-info {
+            margin-top: 12px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.3);
+            font-size: 0.85rem;
+            opacity: 0.8;
+        }
+
+        .debug-item {
+            margin: 4px 0;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 300px 1fr;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .filters {
+            background: var(--card-bg);
+            padding: 24px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+            position: sticky;
+            top: 20px;
+            max-height: calc(100vh - 40px);
+            overflow-y: auto;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+
+            .hamburger-btn {
+                display: block;
+            }
+
+            .filters {
+                position: fixed !important;
+                top: 0 !important;
+                left: -100% !important;
+                bottom: 0;
+                width: 85%;
+                max-width: 320px;
+                z-index: 999;
+                transition: left 0.3s ease;
+                max-height: 100vh;
+                order: -1;
+                box-shadow: var(--shadow-lg);
+            }
+
+            .filters.mobile-open {
+                left: 0 !important;
+            }
+
+            .filter-close-btn {
+                display: block;
+            }
+        }
+
+        .filter-section {
+            margin-bottom: 24px;
+        }
+
+        .filter-section:last-child {
+            margin-bottom: 0;
+        }
+
+        .filter-section h3 {
+            font-size: 0.875rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 12px;
+            letter-spacing: 0.05em;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .filter-section h3 .text-buttons {
+            display: flex;
+            gap: 8px;
+            font-size: 0.75rem;
+            text-transform: none;
+            letter-spacing: normal;
+        }
+
+        .filter-section h3 .text-btn {
+            color: var(--primary-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 0;
+            font-weight: 500;
+            transition: opacity 0.2s;
+        }
+
+        .filter-section h3 .text-btn:hover {
+            opacity: 0.7;
+            text-decoration: underline;
+        }
+
+        .search-box {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        .date-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .date-btn {
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            background: white;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            transition: all 0.2s;
+            text-align: left;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .date-btn:hover {
+            border-color: var(--primary-color);
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .date-btn.active {
+            background: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .date-btn .count {
+            font-size: 0.8rem;
+            opacity: 0.7;
+            background: rgba(0, 0, 0, 0.1);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .date-btn.active .count {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        .city-list {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .city-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px 4px;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+
+        .city-checkbox:hover {
+            background: rgba(37, 99, 235, 0.05);
+        }
+
+        .city-checkbox input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .city-checkbox label {
+            flex: 1;
+            cursor: pointer;
+            font-size: 0.9rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .city-count {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+            background: var(--bg-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+        }
+
+        .city-only-btn {
+            font-size: 0.75rem;
+            color: var(--primary-color);
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 2px 6px;
+            border-radius: 4px;
+            margin-left: 4px;
+            transition: all 0.2s;
+            opacity: 0;
+        }
+
+        .city-checkbox:hover .city-only-btn {
+            opacity: 1;
+        }
+
+        .city-only-btn:hover {
+            background: rgba(37, 99, 235, 0.1);
+        }
+
+        .time-select {
+            width: 100%;
+            padding: 10px 14px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 0.9rem;
+            background: white;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .time-select:focus {
+            outline: none;
+            border-color: var(--primary-color);
+        }
+
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px 4px;
+            cursor: pointer;
+        }
+
+        .toggle-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+            accent-color: var(--primary-color);
+        }
+
+        .toggle-option label {
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .clear-filters-btn {
+            width: 100%;
+            padding: 12px;
+            background: var(--text-secondary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .clear-filters-btn:hover {
+            background: var(--text-primary);
+            transform: translateY(-1px);
+        }
+
+        .hamburger-btn {
+            display: none;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 1.5rem;
+            line-height: 1;
+            transition: all 0.2s;
+            backdrop-filter: blur(10px);
+        }
+
+        .hamburger-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 998;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .backdrop.active {
+            display: block;
+            opacity: 1;
+        }
+
+        .filter-close-btn {
+            display: none;
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: var(--text-secondary);
+            color: white;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 1.2rem;
+            line-height: 1;
+            transition: all 0.2s;
+            z-index: 1000;
+        }
+
+        .filter-close-btn:hover {
+            background: var(--text-primary);
+            transform: scale(1.1);
+        }
+
+        .hide-mobile {
+            display: block;
+        }
+
+        .show-mobile {
+            display: none;
+        }
+
+        .events-container {
+            min-height: 400px;
+        }
+
+        .day-group {
+            margin-bottom: 40px;
+        }
+
+        .day-header {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 3px solid var(--primary-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .day-count {
+            font-size: 0.9rem;
+            font-weight: 500;
+            color: var(--text-secondary);
+            background: var(--bg-color);
+            padding: 6px 14px;
+            border-radius: 20px;
+        }
+
+        .event-card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 0;
+            margin-bottom: 16px;
+            box-shadow: var(--shadow-md);
+            transition: all 0.2s;
+            border: 2px solid transparent;
+            overflow: hidden;
+            display: flex;
+            flex-direction: row;
+        }
+
+        .event-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            border-color: var(--primary-color);
+        }
+
+        .event-image {
+            width: 300px;
+            min-width: 300px;
+            height: auto;
+            object-fit: contain;
+            padding: 12px;
+        }
+
+        .event-content {
+            padding: 24px;
+            flex: 1;
+        }
+
+        .event-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+
+        .event-title {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: 1.4;
+            flex: 1;
+        }
+
+        .event-badges {
+            display: flex;
+            gap: 8px;
+            flex-shrink: 0;
+        }
+
+        .badge {
+            padding: 4px 10px;
+            border-radius: 6px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            white-space: nowrap;
+        }
+
+        .badge-editors {
+            background: var(--badge-editors);
+            color: white;
+        }
+
+        .badge-free {
+            background: var(--badge-free);
+            color: white;
+        }
+
+        .badge-recurring {
+            background: #8b5cf6;
+            color: white;
+        }
+
+        .event-details {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+
+        .event-detail {
+            display: flex;
+            align-items: start;
+            gap: 10px;
+            font-size: 0.95rem;
+        }
+
+        .event-detail-label {
+            font-weight: 600;
+            color: var(--text-secondary);
+            min-width: 60px;
+        }
+
+        .event-detail-value {
+            color: var(--text-primary);
+        }
+
+        .event-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--primary-color);
+            text-decoration: none;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .event-link:hover {
+            color: var(--secondary-color);
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            background: var(--card-bg);
+            border-radius: 12px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .empty-state-icon {
+            font-size: 4rem;
+            margin-bottom: 16px;
+            opacity: 0.5;
+        }
+
+        .empty-state h2 {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+
+        .empty-state p {
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.5rem;
+            }
+
+            .hamburger-btn {
+                display: block !important;
+                padding: 10px 14px;
+                font-size: 1.3rem;
+            }
+
+            .copy-link-btn span {
+                display: none;
+            }
+
+            .copy-link-btn::after {
+                content: '🔗';
+            }
+
+            .hide-mobile {
+                display: none !important;
+            }
+
+            .show-mobile {
+                display: block !important;
+            }
+
+            .main-content {
+                gap: 20px;
+            }
+
+            .event-card {
+                flex-direction: column;
+            }
+
+            .event-image {
+                width: 100%;
+                min-width: unset;
+                max-height: 200px;
+            }
+
+            .event-content {
+                padding: 18px;
+            }
+
+            .event-title {
+                font-size: 1.1rem;
+            }
+
+            .event-header {
+                flex-direction: column;
+            }
+
+            .event-badges {
+                align-self: flex-start;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="header-top">
+                <div class="header-left">
+                    <button class="hamburger-btn" id="hamburger-btn" aria-label="Toggle filters menu">
+                        <span>☰</span>
+                    </button>
+                    <h1>🎉 ParentMap Events Viewer</h1>
+                </div>
+                <button class="copy-link-btn" id="copy-link-btn" title="Copy shareable link with current filters">
+                    <span>🔗 Share Link</span>
+                </button>
+            </div>
+            <p>Discover family-friendly events in the Seattle area</p>
+            <div class="stats">
+                <div class="stat hide-mobile">📅 <span id="total-events">0</span> Total Events</div>
+                <div class="stat hide-mobile">🔍 <span id="filtered-events">0</span> Showing</div>
+                <div class="stat hide-mobile">📍 <span id="total-cities">0</span> Cities</div>
+            </div>
+            <div id="debug-info" class="debug-info" style="display: none;">
+                <div class="debug-item hide-mobile">📁 Data source: <span id="debug-source">-</span></div>
+                <div class="debug-item">🕐 Last scraped: <span id="debug-scraped">-</span></div>
+            </div>
+        </header>
+
+        <div class="backdrop" id="filters-backdrop"></div>
+
+        <div class="main-content">
+            <aside class="filters" id="filters-sidebar">
+                <button class="filter-close-btn" id="filter-close-btn" aria-label="Close filters">×</button>
+                <div class="filter-section">
+                    <h3>📅 Quick Dates</h3>
+                    <div class="date-buttons" id="date-buttons">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>🎯 Event Type</h3>
+                    <div class="toggle-option">
+                        <input type="checkbox" id="free-only">
+                        <label for="free-only">Free events only</label>
+                    </div>
+                    <div class="toggle-option">
+                        <input type="checkbox" id="editors-choice-only">
+                        <label for="editors-choice-only">Editor's Choice only</label>
+                    </div>
+                    <div class="toggle-option">
+                        <input type="checkbox" id="hide-repeating">
+                        <label for="hide-repeating" id="hide-repeating-label">Hide repeating events</label>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>
+                        <span>📍 Cities</span>
+                        <span class="text-buttons">
+                            <button class="text-btn" id="select-all-cities">select all</button>
+                            <span style="color: var(--text-secondary);">      </span>
+                            <button class="text-btn" id="clear-all-cities">clear</button>
+                        </span>
+                    </h3>
+                    <div class="city-list" id="city-list">
+                        <!-- Generated dynamically -->
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <h3>🕐 Time Window</h3>
+                    <select class="time-select" id="time-filter">
+                        <option value="all">All times</option>
+                        <option value="morning">Morning (before 12 PM)</option>
+                        <option value="afternoon">Afternoon (12 - 5 PM)</option>
+                        <option value="evening">Evening (after 5 PM)</option>
+                        <option value="custom">Custom time range...</option>
+                    </select>
+                    <div id="custom-time-inputs" style="display: none; margin-top: 10px;">
+                        <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 6px;">
+                            <label style="font-size: 0.85rem; color: var(--text-secondary); min-width: 50px;">Start by:</label>
+                            <input type="time" id="custom-start-time" class="search-box" style="padding: 6px 10px;" value="11:00">
+                        </div>
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <label style="font-size: 0.85rem; color: var(--text-secondary); min-width: 50px;">End after:</label>
+                            <input type="time" id="custom-end-time" class="search-box" style="padding: 6px 10px;" value="13:00">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="filter-section">
+                    <button class="clear-filters-btn" id="clear-filters">Clear All Filters</button>
+                </div>
+            </aside>
+
+            <main>
+                <div class="events-container" id="events-container">
+                    <div class="loading">Loading events...</div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+    <script>
+        // Configuration
+        const SHOW_DEBUG_INFO = true;
+        const REPEATING_EVENT_THRESHOLD = 7; // Events appearing on more than this many days are considered "repeating"
+
+        // State
+        let allEvents = [];
+        let filteredEvents = [];
+        let repeatingEventTitles = new Set(); // Store titles of events that repeat >3 days
+        let filters = {
+            dates: new Set(),
+            cities: new Set(),
+            timeRange: 'all',
+            customStartTime: null,
+            customEndTime: null,
+            freeOnly: false,
+            editorsChoiceOnly: false,
+            hideRepeating: false
+        };
+
+        // Calculate which events repeat more than 3 days
+        function calculateRepeatingEvents() {
+            const eventOccurrences = {};
+
+            // Count how many different dates each event title appears on
+            allEvents.forEach(event => {
+                const title = event.title;
+                if (!eventOccurrences[title]) {
+                    eventOccurrences[title] = new Set();
+                }
+                eventOccurrences[title].add(event.date);
+            });
+
+            // Mark events that appear on more than REPEATING_EVENT_THRESHOLD different days
+            repeatingEventTitles.clear();
+            Object.entries(eventOccurrences).forEach(([title, dates]) => {
+                if (dates.size > REPEATING_EVENT_THRESHOLD) {
+                    repeatingEventTitles.add(title);
+                }
+            });
+        }
+
+        // Parse filters from URL parameters
+        function parseFiltersFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            const urlFilters = {
+                dates: new Set(),
+                cities: new Set(),
+                timeRange: 'all',
+                customStartTime: null,
+                customEndTime: null,
+                freeOnly: false,
+                editorsChoiceOnly: false,
+                hideRepeating: false
+            };
+
+            // Parse dates (comma-separated)
+            if (params.has('dates')) {
+                params.get('dates').split(',').forEach(date => {
+                    if (date.trim()) urlFilters.dates.add(date.trim());
+                });
+            }
+
+            // Parse cities (comma-separated)
+            if (params.has('cities')) {
+                params.get('cities').split(',').forEach(city => {
+                    if (city.trim()) urlFilters.cities.add(decodeURIComponent(city.trim()));
+                });
+            }
+
+            // Parse time range
+            if (params.has('timeRange')) {
+                const timeRange = params.get('timeRange');
+                if (['all', 'morning', 'afternoon', 'evening', 'custom'].includes(timeRange)) {
+                    urlFilters.timeRange = timeRange;
+                }
+            }
+
+            // Parse custom times
+            if (params.has('customStart')) {
+                urlFilters.customStartTime = params.get('customStart');
+            }
+            if (params.has('customEnd')) {
+                urlFilters.customEndTime = params.get('customEnd');
+            }
+
+            // Parse boolean flags
+            if (params.has('free')) {
+                urlFilters.freeOnly = params.get('free') === 'true';
+            }
+            if (params.has('editorsChoice')) {
+                urlFilters.editorsChoiceOnly = params.get('editorsChoice') === 'true';
+            }
+            if (params.has('hideRepeating')) {
+                urlFilters.hideRepeating = params.get('hideRepeating') === 'true';
+            }
+
+            return urlFilters;
+        }
+
+        // Apply URL filters to the UI and filter state
+        function applyFiltersFromURL(urlFilters) {
+            // Apply dates
+            filters.dates = urlFilters.dates;
+
+            // Apply cities (or default to all if none specified)
+            if (urlFilters.cities.size > 0) {
+                filters.cities = urlFilters.cities;
+            }
+
+            // Apply time range
+            filters.timeRange = urlFilters.timeRange;
+            filters.customStartTime = urlFilters.customStartTime;
+            filters.customEndTime = urlFilters.customEndTime;
+
+            // Apply boolean flags
+            filters.freeOnly = urlFilters.freeOnly;
+            filters.editorsChoiceOnly = urlFilters.editorsChoiceOnly;
+            filters.hideRepeating = urlFilters.hideRepeating;
+        }
+
+        // Update UI elements to match current filter state
+        function updateUIFromFilters() {
+            // Update time filter dropdown
+            document.getElementById('time-filter').value = filters.timeRange;
+
+            // Show/hide custom time inputs
+            const customInputs = document.getElementById('custom-time-inputs');
+            if (filters.timeRange === 'custom') {
+                customInputs.style.display = 'block';
+                if (filters.customStartTime) {
+                    document.getElementById('custom-start-time').value = filters.customStartTime;
+                }
+                if (filters.customEndTime) {
+                    document.getElementById('custom-end-time').value = filters.customEndTime;
+                }
+            } else {
+                customInputs.style.display = 'none';
+            }
+
+            // Update free/editor's choice/hide repeating checkboxes
+            document.getElementById('free-only').checked = filters.freeOnly;
+            document.getElementById('editors-choice-only').checked = filters.editorsChoiceOnly;
+            document.getElementById('hide-repeating').checked = filters.hideRepeating;
+
+            // Update date buttons (will be set after setupDateButtons creates them)
+            // This happens in setupFilters after date buttons are created
+
+            // Update city checkboxes (will be set after setupCityCheckboxes creates them)
+            // This happens in setupFilters after city checkboxes are created
+        }
+
+        // Generate URL with current filter state
+        function generateFilterURL() {
+            const params = new URLSearchParams();
+
+            // Add dates
+            if (filters.dates.size > 0) {
+                params.set('dates', Array.from(filters.dates).sort().join(','));
+            }
+
+            // Add cities (only if not all cities are selected)
+            const allCities = new Set(allEvents.map(e => e.city || 'Unknown'));
+            if (filters.cities.size > 0 && filters.cities.size < allCities.size) {
+                params.set('cities', Array.from(filters.cities).sort().join(','));
+            }
+
+            // Add time range (only if not 'all')
+            if (filters.timeRange !== 'all') {
+                params.set('timeRange', filters.timeRange);
+            }
+
+            // Add custom times
+            if (filters.timeRange === 'custom') {
+                if (filters.customStartTime) {
+                    params.set('customStart', filters.customStartTime);
+                }
+                if (filters.customEndTime) {
+                    params.set('customEnd', filters.customEndTime);
+                }
+            }
+
+            // Add boolean flags (only if true)
+            if (filters.freeOnly) {
+                params.set('free', 'true');
+            }
+            if (filters.editorsChoiceOnly) {
+                params.set('editorsChoice', 'true');
+            }
+            if (filters.hideRepeating) {
+                params.set('hideRepeating', 'true');
+            }
+
+            const queryString = params.toString();
+            return queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
+        }
+
+        // Copy filter link to clipboard
+        async function copyFilterLink() {
+            const url = window.location.origin + generateFilterURL();
+            const button = document.getElementById('copy-link-btn');
+
+            try {
+                await navigator.clipboard.writeText(url);
+
+                // Show success feedback
+                const originalHTML = button.innerHTML;
+                button.classList.add('copied');
+                button.innerHTML = '<span>✓ Link Copied to Clipboard!</span>';
+
+                setTimeout(() => {
+                    button.classList.remove('copied');
+                    button.innerHTML = originalHTML;
+                }, 2000);
+            } catch (err) {
+                console.error('Failed to copy:', err);
+                alert('Failed to copy link. Please try again.');
+            }
+        }
+
+        // Initialize
+        async function init() {
+            try {
+                // Try cloud file first, fallback to local storage
+                let response;
+                let dataSource = '';
+                try {
+                    response = await fetch('https://storage.googleapis.com/parentmap-scrapes-1106/events_latest_detailed.json');
+                    dataSource = 'events_latest_detailed.json (cloud storage)';
+                } catch (e) {
+                    console.log("Falling back to local data file...");
+                    response = await fetch('../data/events_latest_detailed.json');
+                    dataSource = '../data/events_latest_detailed.json (local)';
+                }
+                const data = await response.json();
+                allEvents = data.events || [];
+
+                // Calculate repeating events
+                calculateRepeatingEvents();
+
+                // Update debug info
+                if (SHOW_DEBUG_INFO) {
+                    document.getElementById('debug-info').style.display = 'block';
+                    document.getElementById('debug-source').textContent = dataSource;
+
+                    // Get scrape date from data
+                    const scrapeDate = data.search_date || 'unknown';
+                    const formattedDate = scrapeDate !== 'unknown'
+                        ? new Date(scrapeDate).toLocaleString('en-US', {
+                            month: 'short',
+                            day: 'numeric',
+                            year: 'numeric',
+                            hour: 'numeric',
+                            minute: '2-digit'
+                          })
+                        : 'unknown';
+                    document.getElementById('debug-scraped').textContent = formattedDate;
+                }
+
+                // Parse and apply URL filters BEFORE setting up UI
+                const urlFilters = parseFiltersFromURL();
+                applyFiltersFromURL(urlFilters);
+
+                // Update the hide repeating label with the threshold value
+                document.getElementById('hide-repeating-label').textContent =
+                    `Hide repeating events (>${REPEATING_EVENT_THRESHOLD} days)`;
+
+                setupFilters();
+                updateUIFromFilters();
+                applyFilters();
+                updateStats();
+            } catch (error) {
+                console.error('Error loading events:', error);
+                document.getElementById('events-container').innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">⚠️</div>
+                        <h2>Error Loading Events</h2>
+                        <p>Could not load events data. Please check the console for details.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Setup filter controls
+        function setupFilters() {
+            setupDateButtons();
+            setupCityCheckboxes();
+            setupEventListeners();
+        }
+
+        // Helper function to get local date in YYYY-MM-DD format
+        function getLocalDateString(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const day = String(date.getDate()).padStart(2, '0');
+            return `${year}-${month}-${day}`;
+        }
+
+        // Generate date buttons
+        function setupDateButtons() {
+            const dates = [...new Set(allEvents.map(e => e.date))].sort();
+            const todayDate = new Date();
+            const today = getLocalDateString(todayDate);
+            const tomorrow = getLocalDateString(new Date(todayDate.getTime() + 86400000));
+
+            const buttonContainer = document.getElementById('date-buttons');
+            const dateButtons = [
+                { label: 'Today', value: today },
+                { label: 'Tomorrow', value: tomorrow },
+            ];
+
+            // Add This Saturday/Sunday
+            const dayOfWeek = todayDate.getDay();
+            const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
+            const daysUntilSunday = (7 - dayOfWeek + 7) % 7 || 7;
+
+            const saturday = getLocalDateString(new Date(todayDate.getTime() + daysUntilSaturday * 86400000));
+            const sunday = getLocalDateString(new Date(todayDate.getTime() + daysUntilSunday * 86400000));
+
+            if (dates.includes(saturday)) {
+                dateButtons.push({ label: 'This Saturday', value: saturday });
+            }
+            if (dates.includes(sunday)) {
+                dateButtons.push({ label: 'This Sunday', value: sunday });
+            }
+
+            dateButtons.forEach(btn => {
+                const count = allEvents.filter(e => e.date === btn.value).length;
+                if (count > 0) {
+                    const button = document.createElement('button');
+                    button.className = 'date-btn';
+                    button.dataset.date = btn.value;
+
+                    // Check if this date is in the URL filters
+                    if (filters.dates.has(btn.value)) {
+                        button.classList.add('active');
+                    }
+
+                    button.innerHTML = `
+                        <span>${btn.label}</span>
+                        <span class="count">${count}</span>
+                    `;
+                    button.addEventListener('click', () => toggleDateFilter(btn.value, button));
+                    buttonContainer.appendChild(button);
+                }
+            });
+        }
+
+        // Generate city checkboxes
+        function setupCityCheckboxes() {
+            const cityCounts = {};
+            allEvents.forEach(event => {
+                const city = event.city || 'Unknown';
+                cityCounts[city] = (cityCounts[city] || 0) + 1;
+            });
+
+            const sortedCities = Object.entries(cityCounts)
+                .sort((a, b) => a[0].localeCompare(b[0]));
+
+            // Check if cities were specified in URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const citiesFromURL = urlParams.has('cities');
+
+            const cityList = document.getElementById('city-list');
+            sortedCities.forEach(([city, count]) => {
+                const div = document.createElement('div');
+                div.className = 'city-checkbox';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `city-${city}`;
+                checkbox.value = city;
+
+                // Check if cities were specified in URL, otherwise default to all
+                if (citiesFromURL) {
+                    // Cities were specified in URL - only check those cities
+                    checkbox.checked = filters.cities.has(city);
+                } else {
+                    // No cities in URL - default to all cities checked
+                    checkbox.checked = true;
+                    filters.cities.add(city);
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = `city-${city}`;
+                label.innerHTML = `
+                    <span>${city}</span>
+                    <span class="city-count">${count}</span>
+                `;
+
+                const onlyBtn = document.createElement('button');
+                onlyBtn.className = 'city-only-btn';
+                onlyBtn.textContent = 'only';
+                onlyBtn.title = `Show only ${city}`;
+                onlyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectOnlyCity(city);
+                });
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                div.appendChild(onlyBtn);
+                cityList.appendChild(div);
+
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        filters.cities.add(city);
+                    } else {
+                        filters.cities.delete(city);
+                    }
+                    applyFilters();
+                });
+            });
+        }
+
+        // Select only one city
+        function selectOnlyCity(selectedCity) {
+            filters.cities.clear();
+            filters.cities.add(selectedCity);
+
+            document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
+                checkbox.checked = (checkbox.value === selectedCity);
+            });
+
+            applyFilters();
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            document.getElementById('select-all-cities').addEventListener('click', () => {
+                filters.cities.clear();
+                document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
+                    checkbox.checked = true;
+                    filters.cities.add(checkbox.value);
+                });
+                applyFilters();
+            });
+
+            document.getElementById('clear-all-cities').addEventListener('click', () => {
+                filters.cities.clear();
+                document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                applyFilters();
+            });
+
+            document.getElementById('time-filter').addEventListener('change', (e) => {
+                filters.timeRange = e.target.value;
+                const customInputs = document.getElementById('custom-time-inputs');
+                if (e.target.value === 'custom') {
+                    customInputs.style.display = 'block';
+                    filters.customStartTime = document.getElementById('custom-start-time').value;
+                    filters.customEndTime = document.getElementById('custom-end-time').value;
+                } else {
+                    customInputs.style.display = 'none';
+                    filters.customStartTime = null;
+                    filters.customEndTime = null;
+                }
+                applyFilters();
+            });
+
+            document.getElementById('custom-start-time').addEventListener('change', (e) => {
+                filters.customStartTime = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('custom-end-time').addEventListener('change', (e) => {
+                filters.customEndTime = e.target.value;
+                applyFilters();
+            });
+
+            document.getElementById('free-only').addEventListener('change', (e) => {
+                filters.freeOnly = e.target.checked;
+                applyFilters();
+            });
+
+            document.getElementById('editors-choice-only').addEventListener('change', (e) => {
+                filters.editorsChoiceOnly = e.target.checked;
+                applyFilters();
+            });
+
+            document.getElementById('hide-repeating').addEventListener('change', (e) => {
+                filters.hideRepeating = e.target.checked;
+                applyFilters();
+            });
+
+            document.getElementById('clear-filters').addEventListener('click', clearAllFilters);
+
+            document.getElementById('copy-link-btn').addEventListener('click', copyFilterLink);
+        }
+
+        // Toggle date filter
+        function toggleDateFilter(date, button) {
+            if (filters.dates.has(date)) {
+                filters.dates.delete(date);
+                button.classList.remove('active');
+            } else {
+                filters.dates.add(date);
+                button.classList.add('active');
+            }
+            applyFilters();
+        }
+
+        // Clear all filters
+        function clearAllFilters() {
+            filters.dates.clear();
+            filters.timeRange = 'all';
+            filters.customStartTime = null;
+            filters.customEndTime = null;
+            filters.freeOnly = false;
+            filters.editorsChoiceOnly = false;
+            filters.hideRepeating = false;
+
+            document.getElementById('time-filter').value = 'all';
+            document.getElementById('custom-time-inputs').style.display = 'none';
+            document.getElementById('free-only').checked = false;
+            document.getElementById('editors-choice-only').checked = false;
+            document.getElementById('hide-repeating').checked = false;
+
+            document.querySelectorAll('.date-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
+                checkbox.checked = true;
+                filters.cities.add(checkbox.value);
+            });
+
+            applyFilters();
+        }
+
+        // Update filter counts based on current filters (excluding the filter being counted)
+        function updateFilterCounts() {
+            // Update date button counts (based on city, time, free, search filters - NOT date filter)
+            document.querySelectorAll('.date-btn[data-date]').forEach(btn => {
+                const date = btn.dataset.date;
+                const count = allEvents.filter(event => {
+                    // Apply all filters EXCEPT date filter
+                    const city = event.city || 'Unknown';
+                    if (!filters.cities.has(city)) return false;
+
+                    if (filters.timeRange !== 'all') {
+                        if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
+                            const eventStart = event.start_time_local_24h || '00:00';
+                            const eventEnd = event.end_time_local_24h || '23:59';
+                            if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) return false;
+                        } else {
+                            const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
+                            if (filters.timeRange === 'morning' && startHour >= 12) return false;
+                            if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
+                            if (filters.timeRange === 'evening' && startHour < 17) return false;
+                        }
+                    }
+
+                    if (filters.freeOnly && !event.free) return false;
+                    if (filters.editorsChoiceOnly && !event.editors_choice) return false;
+                    if (filters.hideRepeating && repeatingEventTitles.has(event.title)) return false;
+
+                    return event.date === date;
+                }).length;
+
+                const countSpan = btn.querySelector('.count');
+                if (countSpan) {
+                    countSpan.textContent = count;
+                }
+            });
+
+            // Update city counts (based on date, time, free, search filters - NOT city filter)
+            document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
+                const city = checkbox.value;
+                const count = allEvents.filter(event => {
+                    // Apply all filters EXCEPT city filter
+                    if (filters.dates.size > 0 && !filters.dates.has(event.date)) return false;
+
+                    if (filters.timeRange !== 'all') {
+                        if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
+                            const eventStart = event.start_time_local_24h || '00:00';
+                            const eventEnd = event.end_time_local_24h || '23:59';
+                            if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) return false;
+                        } else {
+                            const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
+                            if (filters.timeRange === 'morning' && startHour >= 12) return false;
+                            if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
+                            if (filters.timeRange === 'evening' && startHour < 17) return false;
+                        }
+                    }
+
+                    if (filters.freeOnly && !event.free) return false;
+                    if (filters.editorsChoiceOnly && !event.editors_choice) return false;
+                    if (filters.hideRepeating && repeatingEventTitles.has(event.title)) return false;
+
+                    return (event.city || 'Unknown') === city;
+                }).length;
+
+                const countSpan = checkbox.parentElement.querySelector('.city-count');
+                if (countSpan) {
+                    countSpan.textContent = count;
+                }
+
+                // Hide cities with 0 count
+                const cityDiv = checkbox.parentElement;
+                if (count === 0) {
+                    cityDiv.style.display = 'none';
+                } else {
+                    cityDiv.style.display = 'flex';
+                }
+            });
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            filteredEvents = allEvents.filter(event => {
+                // Date filter
+                if (filters.dates.size > 0 && !filters.dates.has(event.date)) {
+                    return false;
+                }
+
+                // City filter
+                const city = event.city || 'Unknown';
+                if (!filters.cities.has(city)) {
+                    return false;
+                }
+
+                // Time filter
+                if (filters.timeRange !== 'all') {
+                    if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
+                        // Custom time range:
+                        // - Event must START at or before "Start by" time (customStartTime)
+                        // - Event must END at or after "End after" time (customEndTime)
+                        const eventStart = event.start_time_local_24h || '00:00';
+                        const eventEnd = event.end_time_local_24h || '23:59';
+
+                        // Event starts too late OR event ends too early
+                        if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) {
+                            return false;
+                        }
+                    } else {
+                        // Preset time ranges
+                        const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
+                        if (filters.timeRange === 'morning' && startHour >= 12) return false;
+                        if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
+                        if (filters.timeRange === 'evening' && startHour < 17) return false;
+                    }
+                }
+
+                // Free filter
+                if (filters.freeOnly && !event.free) {
+                    return false;
+                }
+
+                // Editor's Choice filter
+                if (filters.editorsChoiceOnly && !event.editors_choice) {
+                    return false;
+                }
+
+                // Hide repeating events filter
+                if (filters.hideRepeating && repeatingEventTitles.has(event.title)) {
+                    return false;
+                }
+
+                return true;
+            });
+
+            renderEvents();
+            updateStats();
+            updateFilterCounts();
+        }
+
+        // Render events
+        function renderEvents() {
+            const container = document.getElementById('events-container');
+
+            if (filteredEvents.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-state-icon">🔍</div>
+                        <h2>No Events Found</h2>
+                        <p>Try adjusting your filters to see more events.</p>
+                        <button class="clear-filters-btn" onclick="clearAllFilters()" style="max-width: 200px; margin: 0 auto;">Clear Filters</button>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by date
+            const grouped = {};
+            filteredEvents.forEach(event => {
+                if (!grouped[event.date]) {
+                    grouped[event.date] = [];
+                }
+                grouped[event.date].push(event);
+            });
+
+            // Render day groups
+            const sortedDates = Object.keys(grouped).sort();
+            let html = '';
+
+            sortedDates.forEach(date => {
+                const events = grouped[date];
+                const dateObj = new Date(date + 'T00:00:00');
+                const dateStr = dateObj.toLocaleDateString('en-US', {
+                    weekday: 'long',
+                    month: 'long',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
+
+                html += `
+                    <div class="day-group">
+                        <div class="day-header">
+                            <span>${dateStr}</span>
+                            <span class="day-count">${events.length} events</span>
+                        </div>
+                        ${events.map(event => renderEventCard(event)).join('')}
+                    </div>
+                `;
+            });
+
+            container.innerHTML = html;
+        }
+
+        // Render single event card
+        function renderEventCard(event) {
+            const timeStr = formatTime(event.start_time_local_24h, event.end_time_local_24h);
+            const location = event.venue
+                ? `${event.venue}${event.city ? ' (' + event.city + ')' : ''}`
+                : (event.city || 'Location TBA');
+
+            // Use photo_url if available, fallback to thumbnail_url
+            const imageUrl = event.photo_url || event.thumbnail_url;
+            const imageHtml = imageUrl
+                ? `<img src="${imageUrl}" alt="${event.title}" class="event-image" onerror="this.style.display='none'">`
+                : '';
+
+            // Format price
+            const priceHtml = event.price
+                ? `<div class="event-detail">
+                    <span class="event-detail-label">PRICE:</span>
+                    <span class="event-detail-value">${event.price}</span>
+                   </div>`
+                : '';
+
+            return `
+                <div class="event-card">
+                    ${imageHtml}
+                    <div class="event-content">
+                        <div class="event-header">
+                            <div class="event-title">
+                                ${event.title}${event.venue ? ' at ' + event.venue : ''}${event.city ? ' (' + event.city + ')' : ''}
+                            </div>
+                            <div class="event-badges">
+                                ${event.editors_choice ? '<span class="badge badge-editors">⭐ Editor\'s Choice</span>' : ''}
+                                ${event.free ? '<span class="badge badge-free">🆓 Free</span>' : ''}
+                                ${event.recurring ? '<span class="badge badge-recurring">🔁 Recurring</span>' : ''}
+                            </div>
+                        </div>
+                        <div class="event-details">
+                            <div class="event-detail">
+                                <span class="event-detail-label">WHEN:</span>
+                                <span class="event-detail-value">${timeStr}</span>
+                            </div>
+                            <div class="event-detail">
+                                <span class="event-detail-label">WHERE:</span>
+                                <span class="event-detail-value">${location}</span>
+                            </div>
+                            ${priceHtml}
+                        </div>
+                        <a href="${event.url}" target="_blank" class="event-link">
+                            🔗 ParentMap event page →
+                        </a>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Format time
+        function formatTime(start, end) {
+            if (!start) return 'Time TBA';
+
+            const format12h = (time24) => {
+                const [hours, minutes] = time24.split(':');
+                const h = parseInt(hours);
+                const period = h >= 12 ? 'PM' : 'AM';
+                const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+                return `${h12}:${minutes} ${period}`;
+            };
+
+            const startFormatted = format12h(start);
+            const endFormatted = end ? format12h(end) : null;
+
+            return endFormatted ? `${startFormatted} - ${endFormatted}` : startFormatted;
+        }
+
+        // Update stats
+        function updateStats() {
+            document.getElementById('total-events').textContent = allEvents.length;
+            document.getElementById('filtered-events').textContent = filteredEvents.length;
+
+            const cities = new Set(allEvents.map(e => e.city || 'Unknown'));
+            document.getElementById('total-cities').textContent = cities.size;
+        }
+
+        // Mobile menu toggle
+        function toggleMobileFilters() {
+            const filters = document.getElementById('filters-sidebar');
+            const backdrop = document.getElementById('filters-backdrop');
+
+            filters.classList.toggle('mobile-open');
+            backdrop.classList.toggle('active');
+
+            // Prevent body scroll when menu is open
+            if (filters.classList.contains('mobile-open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = '';
+            }
+        }
+
+        function closeMobileFilters() {
+            const filters = document.getElementById('filters-sidebar');
+            const backdrop = document.getElementById('filters-backdrop');
+
+            filters.classList.remove('mobile-open');
+            backdrop.classList.remove('active');
+            document.body.style.overflow = '';
+        }
+
+        // Setup mobile menu event listeners
+        document.getElementById('hamburger-btn').addEventListener('click', toggleMobileFilters);
+        document.getElementById('filters-backdrop').addEventListener('click', closeMobileFilters);
+        document.getElementById('filter-close-btn').addEventListener('click', closeMobileFilters);
+
+        // Close mobile menu when window is resized to desktop size
+        window.addEventListener('resize', () => {
+            if (window.innerWidth > 968) {
+                closeMobileFilters();
+            }
+        });
+
+        // Start the app
+        init();
+    </script>
+</body>
+</html>

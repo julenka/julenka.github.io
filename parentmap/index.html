@@ -72,33 +72,6 @@
             gap: 12px;
         }
 
-        .copy-link-btn {
-            background: rgba(255, 255, 255, 0.2);
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            padding: 8px 16px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: all 0.2s;
-            backdrop-filter: blur(10px);
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .copy-link-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            border-color: rgba(255, 255, 255, 0.5);
-            transform: translateY(-1px);
-        }
-
-        .copy-link-btn.copied {
-            background: rgba(16, 185, 129, 0.3);
-            border-color: rgba(16, 185, 129, 0.5);
-        }
-
         .stats {
             display: flex;
             gap: 20px;
@@ -654,14 +627,6 @@
                 font-size: 1.3rem;
             }
 
-            .copy-link-btn span {
-                display: none;
-            }
-
-            .copy-link-btn::after {
-                content: '🔗';
-            }
-
             .hide-mobile {
                 display: none !important;
             }
@@ -712,9 +677,6 @@
                     </button>
                     <h1>🎉 ParentMap Events Viewer</h1>
                 </div>
-                <button class="copy-link-btn" id="copy-link-btn" title="Copy shareable link with current filters">
-                    <span>🔗 Share Link</span>
-                </button>
             </div>
             <p>Discover family-friendly events in the Seattle area</p>
             <div class="stats">
@@ -807,7 +769,7 @@
     <script>
         // Configuration
         const SHOW_DEBUG_INFO = true;
-        const REPEATING_EVENT_THRESHOLD = 7; // Events appearing on more than this many days are considered "repeating"
+        const REPEATING_EVENT_THRESHOLD = 3; // Events appearing on more than this many days are considered "repeating"
 
         // State
         let allEvents = [];
@@ -1001,27 +963,11 @@
             return queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
         }
 
-        // Copy filter link to clipboard
-        async function copyFilterLink() {
-            const url = window.location.origin + generateFilterURL();
-            const button = document.getElementById('copy-link-btn');
-
-            try {
-                await navigator.clipboard.writeText(url);
-
-                // Show success feedback
-                const originalHTML = button.innerHTML;
-                button.classList.add('copied');
-                button.innerHTML = '<span>✓ Link Copied to Clipboard!</span>';
-
-                setTimeout(() => {
-                    button.classList.remove('copied');
-                    button.innerHTML = originalHTML;
-                }, 2000);
-            } catch (err) {
-                console.error('Failed to copy:', err);
-                alert('Failed to copy link. Please try again.');
-            }
+        // Update the browser URL with current filter state
+        function updateURL() {
+            const newURL = generateFilterURL();
+            // Use replaceState to update URL without adding to browser history
+            window.history.replaceState({}, '', newURL);
         }
 
         // Initialize
@@ -1291,8 +1237,6 @@
             });
 
             document.getElementById('clear-filters').addEventListener('click', clearAllFilters);
-
-            document.getElementById('copy-link-btn').addEventListener('click', copyFilterLink);
         }
 
         // Toggle date filter
@@ -1470,6 +1414,7 @@
             renderEvents();
             updateStats();
             updateFilterCounts();
+            updateURL(); // Update URL whenever filters change
         }
 
         // Render events

@@ -109,9 +109,7 @@
         .filters {
             background: var(--card-bg);
             padding: 24px;
-            border-radius: 12px;
-            border-bottom-left-radius: 0px;
-            border-top-left-radius: 0px;
+            border-radius: 0px;
             box-shadow: var(--shadow-md);
             position: sticky;
             top: 20px;
@@ -209,55 +207,12 @@
             box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
         }
 
-        .date-buttons {
-            display: flex;
-            flex-direction: column;
-            gap: 8px;
-        }
-
-        .date-btn {
-            padding: 10px 14px;
-            border: 2px solid var(--border-color);
-            background: white;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: all 0.2s;
-            text-align: left;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .date-btn:hover {
-            border-color: var(--primary-color);
-            background: rgba(37, 99, 235, 0.05);
-        }
-
-        .date-btn.active {
-            background: var(--primary-color);
-            color: white;
-            border-color: var(--primary-color);
-        }
-
-        .date-btn .count {
-            font-size: 0.8rem;
-            opacity: 0.7;
-            background: rgba(0, 0, 0, 0.1);
-            padding: 2px 8px;
-            border-radius: 12px;
-        }
-
-        .date-btn.active .count {
-            background: rgba(255, 255, 255, 0.2);
-        }
-
         .city-list {
             max-height: 300px;
             overflow-y: auto;
         }
 
-        .city-checkbox {
+        .city-checkbox, .date-checkbox {
             display: flex;
             align-items: center;
             gap: 10px;
@@ -267,18 +222,18 @@
             transition: background 0.2s;
         }
 
-        .city-checkbox:hover {
+        .city-checkbox:hover, .date-checkbox:hover {
             background: rgba(37, 99, 235, 0.05);
         }
 
-        .city-checkbox input[type="checkbox"] {
+        .city-checkbox input[type="checkbox"], .date-checkbox input[type="checkbox"] {
             width: 18px;
             height: 18px;
             cursor: pointer;
             accent-color: var(--primary-color);
         }
 
-        .city-checkbox label {
+        .city-checkbox label, .date-checkbox label {
             flex: 1;
             cursor: pointer;
             font-size: 0.9rem;
@@ -287,7 +242,7 @@
             align-items: center;
         }
 
-        .city-count {
+        .city-count, .date-count {
             font-size: 0.8rem;
             color: var(--text-secondary);
             background: var(--bg-color);
@@ -295,7 +250,7 @@
             border-radius: 12px;
         }
 
-        .city-only-btn {
+        .city-only-btn, .date-only-btn {
             font-size: 0.75rem;
             color: var(--primary-color);
             background: none;
@@ -308,11 +263,11 @@
             opacity: 0;
         }
 
-        .city-checkbox:hover .city-only-btn {
+        .city-checkbox:hover .city-only-btn, .date-checkbox:hover .date-only-btn {
             opacity: 1;
         }
 
-        .city-only-btn:hover {
+        .city-only-btn:hover, .date-only-btn:hover {
             background: rgba(37, 99, 235, 0.1);
         }
 
@@ -688,7 +643,7 @@
             </div>
             <div id="debug-info" class="debug-info" style="display: none;">
                 <div class="debug-item hide-mobile">📁 Data source: <span id="debug-source">-</span></div>
-                <div class="debug-item">🕐 Last scraped: <span id="debug-scraped">-</span></div>
+                <div class="debug-item">🕐 Last updated: <span id="debug-scraped">-</span></div>
             </div>
         </header>
 
@@ -698,8 +653,15 @@
             <aside class="filters" id="filters-sidebar">
                 <button class="filter-close-btn" id="filter-close-btn" aria-label="Close filters">×</button>
                 <div class="filter-section">
-                    <h3>📅 Quick Dates</h3>
-                    <div class="date-buttons" id="date-buttons">
+                    <h3>
+                        <span>📅 Dates</span>
+                        <span class="text-buttons">
+                            <button class="text-btn" id="select-all-dates">select all</button>
+                            <span style="color: var(--text-secondary);">|</span>
+                            <button class="text-btn" id="clear-all-dates">clear</button>
+                        </span>
+                    </h3>
+                    <div class="date-list" id="date-list">
                         <!-- Generated dynamically -->
                     </div>
                 </div>
@@ -738,9 +700,9 @@
                     <h3>🕐 Time Window</h3>
                     <select class="time-select" id="time-filter">
                         <option value="all">All times</option>
-                        <option value="morning">Morning (before 12 PM)</option>
-                        <option value="afternoon">Afternoon (12 - 5 PM)</option>
-                        <option value="evening">Evening (after 5 PM)</option>
+                        <option value="morning">Morning (starts before 12 PM)</option>
+                        <option value="afternoon">Afternoon (starts 12 PM - 5 PM)</option>
+                        <option value="evening">Evening (starts after 5 PM)</option>
                         <option value="custom">Custom time range...</option>
                     </select>
                     <div id="custom-time-inputs" style="display: none; margin-top: 10px;">
@@ -779,6 +741,7 @@
         let repeatingEventTitles = new Set(); // Store titles of events that repeat >3 days
         let filters = {
             dates: new Set(),
+            moreThanWeekOut: false,
             cities: new Set(),
             timeRange: 'all',
             customStartTime: null,
@@ -815,6 +778,7 @@
             const params = new URLSearchParams(window.location.search);
             const urlFilters = {
                 dates: new Set(),
+                moreThanWeekOut: false,
                 cities: new Set(),
                 timeRange: 'all',
                 customStartTime: null,
@@ -864,6 +828,9 @@
             if (params.has('hideRepeating')) {
                 urlFilters.hideRepeating = params.get('hideRepeating') === 'true';
             }
+            if (params.has('moreThanWeekOut')) {
+                urlFilters.moreThanWeekOut = params.get('moreThanWeekOut') === 'true';
+            }
 
             return urlFilters;
         }
@@ -872,6 +839,7 @@
         function applyFiltersFromURL(urlFilters) {
             // Apply dates
             filters.dates = urlFilters.dates;
+            filters.moreThanWeekOut = urlFilters.moreThanWeekOut;
 
             // Apply cities (or default to all if none specified)
             if (urlFilters.cities.size > 0) {
@@ -924,9 +892,18 @@
         function generateFilterURL() {
             const params = new URLSearchParams();
 
-            // Add dates
-            if (filters.dates.size > 0) {
-                params.set('dates', Array.from(filters.dates).sort().join(','));
+            // Add dates (only if not all dates are selected)
+            // All dates means: 7 specific dates selected AND moreThanWeekOut is true
+            const allDatesSelected = filters.dates.size === 7 && filters.moreThanWeekOut;
+            if (!allDatesSelected) {
+                // Add specific dates if any are selected
+                if (filters.dates.size > 0) {
+                    params.set('dates', Array.from(filters.dates).sort().join(','));
+                }
+                // Add moreThanWeekOut flag only if explicitly set and not all dates
+                if (filters.moreThanWeekOut) {
+                    params.set('moreThanWeekOut', 'true');
+                }
             }
 
             // Add cities (only if not all cities are selected)
@@ -965,11 +942,11 @@
             return queryString ? `${window.location.pathname}?${queryString}` : window.location.pathname;
         }
 
-        // Update the browser URL with current filter state
+        // Update URL to reflect current filter state
         function updateURL() {
             const newURL = generateFilterURL();
-            // Use replaceState to update URL without adding to browser history
-            window.history.replaceState({}, '', newURL);
+            // Use history.pushState to update URL without reloading the page
+            window.history.pushState({}, '', newURL);
         }
 
         // Initialize
@@ -999,15 +976,17 @@
 
                     // Get scrape date from data
                     const scrapeDate = data.search_date || 'unknown';
-                    const formattedDate = scrapeDate !== 'unknown'
-                        ? new Date(scrapeDate).toLocaleString('en-US', {
+                    let formattedDate = 'unknown';
+                    if (scrapeDate !== 'unknown') {
+                        // Parse date as YYYY-MM-DD and create date object in local timezone
+                        const [year, month, day] = scrapeDate.split('-').map(Number);
+                        const dateObj = new Date(year, month - 1, day);
+                        formattedDate = dateObj.toLocaleDateString('en-US', {
                             month: 'short',
                             day: 'numeric',
-                            year: 'numeric',
-                            hour: 'numeric',
-                            minute: '2-digit'
-                          })
-                        : 'unknown';
+                            year: 'numeric'
+                        });
+                    }
                     document.getElementById('debug-scraped').textContent = formattedDate;
                 }
 
@@ -1050,54 +1029,126 @@
             return `${year}-${month}-${day}`;
         }
 
-        // Generate date buttons
+        // Generate date checkboxes
         function setupDateButtons() {
-            const dates = [...new Set(allEvents.map(e => e.date))].sort();
             const todayDate = new Date();
             const today = getLocalDateString(todayDate);
-            const tomorrow = getLocalDateString(new Date(todayDate.getTime() + 86400000));
+            const dateList = document.getElementById('date-list');
 
-            const buttonContainer = document.getElementById('date-buttons');
-            const dateButtons = [
-                { label: 'Today', value: today },
-                { label: 'Tomorrow', value: tomorrow },
-            ];
+            // Generate dates for the next 7 days
+            const dateOptions = [];
+            for (let i = 0; i < 7; i++) {
+                const date = new Date(todayDate.getTime() + i * 86400000);
+                const dateStr = getLocalDateString(date);
 
-            // Add This Saturday/Sunday
-            const dayOfWeek = todayDate.getDay();
-            const daysUntilSaturday = (6 - dayOfWeek + 7) % 7 || 7;
-            const daysUntilSunday = (7 - dayOfWeek + 7) % 7 || 7;
+                // Format as "Mon Jan 6"
+                const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
+                const monthName = date.toLocaleDateString('en-US', { month: 'short' });
+                const dayNum = date.getDate();
+                const label = `${dayName} ${monthName} ${dayNum}`;
 
-            const saturday = getLocalDateString(new Date(todayDate.getTime() + daysUntilSaturday * 86400000));
-            const sunday = getLocalDateString(new Date(todayDate.getTime() + daysUntilSunday * 86400000));
-
-            if (dates.includes(saturday)) {
-                dateButtons.push({ label: 'This Saturday', value: saturday });
-            }
-            if (dates.includes(sunday)) {
-                dateButtons.push({ label: 'This Sunday', value: sunday });
+                dateOptions.push({ label, value: dateStr });
             }
 
-            dateButtons.forEach(btn => {
-                const count = allEvents.filter(e => e.date === btn.value).length;
-                if (count > 0) {
-                    const button = document.createElement('button');
-                    button.className = 'date-btn';
-                    button.dataset.date = btn.value;
+            // Add each date as a checkbox
+            dateOptions.forEach(dateOption => {
+                const count = allEvents.filter(e => e.date === dateOption.value).length;
 
-                    // Check if this date is in the URL filters
-                    if (filters.dates.has(btn.value)) {
-                        button.classList.add('active');
-                    }
+                const div = document.createElement('div');
+                div.className = 'date-checkbox';
 
-                    button.innerHTML = `
-                        <span>${btn.label}</span>
-                        <span class="count">${count}</span>
-                    `;
-                    button.addEventListener('click', () => toggleDateFilter(btn.value, button));
-                    buttonContainer.appendChild(button);
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = `date-${dateOption.value}`;
+                checkbox.value = dateOption.value;
+
+                // Check if dates were specified in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const datesFromURL = urlParams.has('dates');
+
+                // If dates were specified in URL, only check those dates; otherwise default to all dates checked
+                if (datesFromURL) {
+                    checkbox.checked = filters.dates.has(dateOption.value);
+                } else {
+                    checkbox.checked = true;
+                    filters.dates.add(dateOption.value);
                 }
+
+                const label = document.createElement('label');
+                label.htmlFor = `date-${dateOption.value}`;
+                label.innerHTML = `
+                    <span>${dateOption.label}</span>
+                    <span class="date-count">${count}</span>
+                `;
+
+                const onlyBtn = document.createElement('button');
+                onlyBtn.className = 'date-only-btn';
+                onlyBtn.textContent = 'only';
+                onlyBtn.title = `Show only ${dateOption.label}`;
+                onlyBtn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    selectOnlyDate(dateOption.value);
+                });
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                div.appendChild(onlyBtn);
+                dateList.appendChild(div);
+
+                checkbox.addEventListener('change', () => {
+                    if (checkbox.checked) {
+                        filters.dates.add(dateOption.value);
+                    } else {
+                        filters.dates.delete(dateOption.value);
+                    }
+                    applyFilters();
+                });
             });
+
+            // Add "More than 1 week out" option
+            const oneWeekFromToday = new Date(todayDate.getTime() + 7 * 86400000);
+            const oneWeekStr = getLocalDateString(oneWeekFromToday);
+            const moreThanWeekCount = allEvents.filter(e => e.date > oneWeekStr).length;
+
+            if (moreThanWeekCount > 0) {
+                const div = document.createElement('div');
+                div.className = 'date-checkbox';
+                div.style.borderTop = '1px solid var(--border-color)';
+                div.style.marginTop = '8px';
+                div.style.paddingTop = '8px';
+
+                const checkbox = document.createElement('input');
+                checkbox.type = 'checkbox';
+                checkbox.id = 'date-more-than-week';
+
+                // Check if dates or moreThanWeekOut were specified in URL
+                const urlParams = new URLSearchParams(window.location.search);
+                const datesFromURL = urlParams.has('dates') || urlParams.has('moreThanWeekOut');
+
+                // If specified in URL, use URL value; otherwise default to checked
+                if (datesFromURL) {
+                    checkbox.checked = filters.moreThanWeekOut;
+                } else {
+                    checkbox.checked = true;
+                    filters.moreThanWeekOut = true;
+                }
+
+                const label = document.createElement('label');
+                label.htmlFor = 'date-more-than-week';
+                label.innerHTML = `
+                    <span>More than 1 week out</span>
+                    <span class="date-count">${moreThanWeekCount}</span>
+                `;
+
+                div.appendChild(checkbox);
+                div.appendChild(label);
+                dateList.appendChild(div);
+
+                checkbox.addEventListener('change', () => {
+                    filters.moreThanWeekOut = checkbox.checked;
+                    applyFilters();
+                });
+            }
         }
 
         // Generate city checkboxes
@@ -1179,8 +1230,42 @@
             applyFilters();
         }
 
+        // Select only one date
+        function selectOnlyDate(selectedDate) {
+            filters.dates.clear();
+            filters.dates.add(selectedDate);
+            filters.moreThanWeekOut = false;
+
+            document.querySelectorAll('.date-checkbox input').forEach(checkbox => {
+                checkbox.checked = (checkbox.value === selectedDate);
+            });
+
+            applyFilters();
+        }
+
         // Event listeners
         function setupEventListeners() {
+            document.getElementById('select-all-dates').addEventListener('click', () => {
+                filters.dates.clear();
+                filters.moreThanWeekOut = true;
+                document.querySelectorAll('.date-checkbox input').forEach(checkbox => {
+                    checkbox.checked = true;
+                    if (checkbox.id !== 'date-more-than-week') {
+                        filters.dates.add(checkbox.value);
+                    }
+                });
+                applyFilters();
+            });
+
+            document.getElementById('clear-all-dates').addEventListener('click', () => {
+                filters.dates.clear();
+                filters.moreThanWeekOut = false;
+                document.querySelectorAll('.date-checkbox input').forEach(checkbox => {
+                    checkbox.checked = false;
+                });
+                applyFilters();
+            });
+
             document.getElementById('select-all-cities').addEventListener('click', () => {
                 filters.cities.clear();
                 document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
@@ -1241,21 +1326,10 @@
             document.getElementById('clear-filters').addEventListener('click', clearAllFilters);
         }
 
-        // Toggle date filter
-        function toggleDateFilter(date, button) {
-            if (filters.dates.has(date)) {
-                filters.dates.delete(date);
-                button.classList.remove('active');
-            } else {
-                filters.dates.add(date);
-                button.classList.add('active');
-            }
-            applyFilters();
-        }
-
         // Clear all filters
         function clearAllFilters() {
             filters.dates.clear();
+            filters.moreThanWeekOut = false;
             filters.timeRange = 'all';
             filters.customStartTime = null;
             filters.customEndTime = null;
@@ -1269,8 +1343,14 @@
             document.getElementById('editors-choice-only').checked = false;
             document.getElementById('hide-repeating').checked = false;
 
-            document.querySelectorAll('.date-btn').forEach(btn => {
-                btn.classList.remove('active');
+            // Select all dates by default (consistent with cities)
+            document.querySelectorAll('.date-checkbox input').forEach(checkbox => {
+                checkbox.checked = true;
+                if (checkbox.id === 'date-more-than-week') {
+                    filters.moreThanWeekOut = true;
+                } else {
+                    filters.dates.add(checkbox.value);
+                }
             });
 
             document.querySelectorAll('.city-checkbox input').forEach(checkbox => {
@@ -1283,37 +1363,74 @@
 
         // Update filter counts based on current filters (excluding the filter being counted)
         function updateFilterCounts() {
-            // Update date button counts (based on city, time, free, search filters - NOT date filter)
-            document.querySelectorAll('.date-btn[data-date]').forEach(btn => {
-                const date = btn.dataset.date;
-                const count = allEvents.filter(event => {
-                    // Apply all filters EXCEPT date filter
-                    const city = event.city || 'Unknown';
-                    if (!filters.cities.has(city)) return false;
+            // Update date checkbox counts (based on city, time, free, search filters - NOT date filter)
+            const todayDate = new Date();
+            const oneWeekFromToday = new Date(todayDate.getTime() + 7 * 86400000);
+            const oneWeekStr = getLocalDateString(oneWeekFromToday);
 
-                    if (filters.timeRange !== 'all') {
-                        if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
-                            const eventStart = event.start_time_local_24h || '00:00';
-                            const eventEnd = event.end_time_local_24h || '23:59';
-                            if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) return false;
-                        } else {
-                            const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
-                            if (filters.timeRange === 'morning' && startHour >= 12) return false;
-                            if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
-                            if (filters.timeRange === 'evening' && startHour < 17) return false;
+            document.querySelectorAll('.date-checkbox input').forEach(checkbox => {
+                if (checkbox.id === 'date-more-than-week') {
+                    // Handle "More than 1 week out" separately
+                    const count = allEvents.filter(event => {
+                        // Apply all filters EXCEPT date filter
+                        const city = event.city || 'Unknown';
+                        if (!filters.cities.has(city)) return false;
+
+                        if (filters.timeRange !== 'all') {
+                            if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
+                                const eventStart = event.start_time_local_24h || '00:00';
+                                const eventEnd = event.end_time_local_24h || '23:59';
+                                if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) return false;
+                            } else {
+                                const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
+                                if (filters.timeRange === 'morning' && startHour >= 12) return false;
+                                if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
+                                if (filters.timeRange === 'evening' && startHour < 17) return false;
+                            }
                         }
+
+                        if (filters.freeOnly && !event.free) return false;
+                        if (filters.editorsChoiceOnly && !event.editors_choice) return false;
+                        if (filters.hideRepeating && repeatingEventTitles.has(event.title)) return false;
+
+                        return event.date > oneWeekStr;
+                    }).length;
+
+                    const countSpan = checkbox.parentElement.querySelector('.date-count');
+                    if (countSpan) {
+                        countSpan.textContent = count;
                     }
+                } else {
+                    const date = checkbox.value;
+                    const count = allEvents.filter(event => {
+                        // Apply all filters EXCEPT date filter
+                        const city = event.city || 'Unknown';
+                        if (!filters.cities.has(city)) return false;
 
-                    if (filters.freeOnly && !event.free) return false;
-                    if (filters.editorsChoiceOnly && !event.editors_choice) return false;
-                    if (filters.hideRepeating && repeatingEventTitles.has(event.title)) return false;
+                        if (filters.timeRange !== 'all') {
+                            if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
+                                const eventStart = event.start_time_local_24h || '00:00';
+                                const eventEnd = event.end_time_local_24h || '23:59';
+                                if (eventStart > filters.customStartTime || eventEnd < filters.customEndTime) return false;
+                            } else {
+                                const startHour = parseInt(event.start_time_local_24h?.split(':')[0] || '0');
+                                if (filters.timeRange === 'morning' && startHour >= 12) return false;
+                                if (filters.timeRange === 'afternoon' && (startHour < 12 || startHour >= 17)) return false;
+                                if (filters.timeRange === 'evening' && startHour < 17) return false;
+                            }
+                        }
 
-                    return event.date === date;
-                }).length;
+                        if (filters.freeOnly && !event.free) return false;
+                        if (filters.editorsChoiceOnly && !event.editors_choice) return false;
+                        if (filters.hideRepeating && repeatingEventTitles.has(event.title)) return false;
 
-                const countSpan = btn.querySelector('.count');
-                if (countSpan) {
-                    countSpan.textContent = count;
+                        return event.date === date;
+                    }).length;
+
+                    const countSpan = checkbox.parentElement.querySelector('.date-count');
+                    if (countSpan) {
+                        countSpan.textContent = count;
+                    }
                 }
             });
 
@@ -1322,7 +1439,12 @@
                 const city = checkbox.value;
                 const count = allEvents.filter(event => {
                     // Apply all filters EXCEPT city filter
-                    if (filters.dates.size > 0 && !filters.dates.has(event.date)) return false;
+                    const hasDateFilters = filters.dates.size > 0 || filters.moreThanWeekOut;
+                    if (hasDateFilters) {
+                        const matchesSpecificDate = filters.dates.has(event.date);
+                        const matchesMoreThanWeek = filters.moreThanWeekOut && event.date > oneWeekStr;
+                        if (!matchesSpecificDate && !matchesMoreThanWeek) return false;
+                    }
 
                     if (filters.timeRange !== 'all') {
                         if (filters.timeRange === 'custom' && filters.customStartTime && filters.customEndTime) {
@@ -1361,9 +1483,18 @@
 
         // Apply all filters
         function applyFilters() {
+            const todayDate = new Date();
+            const oneWeekFromToday = new Date(todayDate.getTime() + 7 * 86400000);
+            const oneWeekStr = getLocalDateString(oneWeekFromToday);
+
             filteredEvents = allEvents.filter(event => {
-                // Date filter
-                if (filters.dates.size > 0 && !filters.dates.has(event.date)) {
+                // Date filter - show event if:
+                // 1. Event date is in the selected dates, OR
+                // 2. moreThanWeekOut is true and event is more than 1 week out
+                // If no dates are selected (dates.size === 0 and !moreThanWeekOut), show NO events
+                const matchesSpecificDate = filters.dates.has(event.date);
+                const matchesMoreThanWeek = filters.moreThanWeekOut && event.date > oneWeekStr;
+                if (!matchesSpecificDate && !matchesMoreThanWeek) {
                     return false;
                 }
 
@@ -1416,7 +1547,7 @@
             renderEvents();
             updateStats();
             updateFilterCounts();
-            updateURL(); // Update URL whenever filters change
+            updateURL();
         }
 
         // Render events
@@ -1475,6 +1606,7 @@
         // Render single event card
         function renderEventCard(event) {
             const timeStr = formatTime(event.start_time_local_24h, event.end_time_local_24h);
+            const dateTimeStr = formatDateTime(event.date, event.start_time_local_24h, event.end_time_local_24h);
             const location = event.venue
                 ? `${event.venue}${event.city ? ' (' + event.city + ')' : ''}`
                 : (event.city || 'Location TBA');
@@ -1510,7 +1642,7 @@
                         <div class="event-details">
                             <div class="event-detail">
                                 <span class="event-detail-label">WHEN:</span>
-                                <span class="event-detail-value">${timeStr}</span>
+                                <span class="event-detail-value">${dateTimeStr}</span>
                             </div>
                             <div class="event-detail">
                                 <span class="event-detail-label">WHERE:</span>
@@ -1542,6 +1674,38 @@
             const endFormatted = end ? format12h(end) : null;
 
             return endFormatted ? `${startFormatted} - ${endFormatted}` : startFormatted;
+        }
+
+        // Format date and time together
+        function formatDateTime(date, start, end) {
+            if (!date) return 'Date TBA';
+
+            // Parse date (YYYY-MM-DD format)
+            const dateObj = new Date(date + 'T00:00:00');
+            const dateStr = dateObj.toLocaleDateString('en-US', {
+                weekday: 'long',
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric'
+            });
+
+            if (!start) {
+                return dateStr;
+            }
+
+            const format12h = (time24) => {
+                const [hours, minutes] = time24.split(':');
+                const h = parseInt(hours);
+                const period = h >= 12 ? 'PM' : 'AM';
+                const h12 = h === 0 ? 12 : (h > 12 ? h - 12 : h);
+                return `${h12}:${minutes} ${period}`;
+            };
+
+            const startFormatted = format12h(start);
+            const endFormatted = end ? format12h(end) : null;
+
+            const timeStr = endFormatted ? `${startFormatted} - ${endFormatted}` : startFormatted;
+            return `${dateStr} @ ${timeStr}`;
         }
 
         // Update stats
